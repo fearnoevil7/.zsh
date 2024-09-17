@@ -1,0 +1,239 @@
+_favCommandConfigsCompletions() {
+
+### Use escapes if string quotes start conflicting.
+
+    
+    typeset -a compiledCompletions
+    typeset -a descriptions
+
+
+    # AWK
+    if [[ $SELECTEDWORD = "awk" ]]; then
+        compiledCompletions=(
+            "awk '{ for (i = 2; i <= NF; i++) printf \"%s \", \$i; print \"\" }'"
+        )
+
+        descriptions=(
+            "awk '{ for (i = 2; i <= NF; i++) printf \"%s \", \$i; print \"\" }'"
+        )
+
+        compadd -V "awk_A" -x "-- Removes the first column of text from the output. --" -l -d descriptions -a compiledCompletions
+        compadd -E 1
+
+        compiledCompletions=(
+            "awk '{print \$1}'"
+        )
+
+        descriptions=(
+            "awk '{print \$1}'"
+        )
+
+        compadd -V "awk_B" -x "-- Outputs only the first column of text. --" -l -d descriptions -a compiledCompletions
+
+
+    # TR
+    elif [[ $SELECTEDWORD = "tr" ]]; then
+        compiledCompletions=(
+            "tr -d \' \'"
+        )
+
+        descriptions=(
+            "tr -d ' '"
+        )
+
+        compadd -V "tr_A" -x "-- Removes all whitespace from the output. --" -l -d descriptions -a compiledCompletions
+        compadd -E 1
+
+
+        compiledCompletions=(
+            "tr ',' \' \'"
+        )
+
+        descriptions=(
+            "tr ',' ' '"
+        )
+
+        compadd -V "tr_B" -x "-- Replace all the commas in the output with spaces. --" -l -d descriptions -a compiledCompletions
+        
+
+
+    # GREP
+    elif [[ $SELECTEDWORD = "grep" ]]; then
+        compiledCompletions=(
+            "grep -E '.md$'"
+        )
+
+        descriptions=(
+            "grep -E '.md$'"
+        )
+
+        compadd -V "grep_A" -x "-- Using regular express selects all lines with '.md' at the end of them. --" -l -d descriptions -a compiledCompletions
+        compadd -E 1
+
+
+        compiledCompletions=(
+            "grep -oE '^test'"
+        )
+
+        descriptions=(
+            "grep -oE '^test'"
+        )
+
+
+        compadd -V "grep_B" -x "-- Using regular expression matches all words with test at the beginning of them but only returns the matched word and not the entire line. --" -l -d descriptions -a compiledCompletions
+        compadd -E 1
+
+
+        compiledCompletions=(
+            "grep -oE \"'[^']*'\""
+        )
+
+        descriptions=(
+            "grep -oE \"'[^']*'\""
+        )
+
+
+        compadd -V "grep_C" -x "-- Matches all text between single quotes and outputs it to the screen. --" -l -d descriptions -a compiledCompletions
+        
+
+    # SED
+    elif [[ $SELECTEDWORD = "sed" ]]; then
+
+        compiledCompletions=(
+            "sed 's/test//'"
+        )
+
+        descriptions=(
+            "sed 's/test//2'"
+        )
+
+        compadd -V "sed_A" -x "-- Removes the first occurance of the word 'test' from the line. --" -l -d descriptions -a compiledCompletions
+        compadd -E 1
+
+
+        compiledcompletions=(
+            "sed 's/test//2'"
+        )
+
+        descriptions=(
+            "sed 's/test//2'"
+        )
+
+        compadd -V "sed_B" -x "-- removes the second occurance of the word 'test' from the line. --" -l -d descriptions -a compiledcompletions
+        #compadd -e 1
+        compadd -E 1
+
+
+        compiledcompletions=(
+            'sed -i "" "/test/d" test123.txt'
+        )
+
+        descriptions=(
+            'sed -i "" "/test/d" test123.txt'
+        )
+
+        compadd -V "sed_C" -x "-- Removes any line with the word test in it. --" -l -d descriptions -a compiledcompletions
+        #compadd -e 1
+        compadd -E 1
+
+
+        compiledCompletions=(
+            "sed 's/test/hello/'"
+        )
+
+        descriptions=(
+            "sed 's/test/hello/'"
+        )
+
+        compadd -V "sed_D" -x "-- Replaces the first occurance of the word 'test' with the word 'hello'. --" -l -d descriptions -a compiledCompletions
+        compadd -E 1
+
+
+        compiledCompletions=(
+            "sed 's/test/hello/g'"
+        )
+
+        descriptions=(
+            "sed 's/test/hello/g'"
+        )
+
+        compadd -V "sed_E" -x "-- Replaces the every occurance of the word 'test' with the word 'hello'. --" -l -d descriptions -a compiledCompletions
+        compadd -E 1
+
+
+        compiledCompletions=(
+            "sed 's/^[[:space:]]*//;s/[[:space:]]*$//'"
+        )
+
+        descriptions=(
+            "sed 's/^[[:space:]]*//;s/[[:space:]]*$//'"
+        )
+
+        compadd -V "sed_F" -x "-- Trim whitepace from the beginning and end of output. --" -l -d descriptions -a compiledCompletions
+        
+
+    elif [[ $SELECTEDWORD = "find" ]]; then
+        
+        compiledCompletions=(
+            "find . -type f -print 2>&1"
+        )
+
+        descriptions=(
+            "find . -type f -print 2>&1"
+        )
+
+        compadd -V "find_A" -x "-- Search for all files and discard all error output. --" -l -d descriptions -a compiledCompletions
+        compadd -E 1
+
+
+        compiledCompletions=(
+            "find ~ -name 'MyTips' -type d -print 2>&1 | grep -v 'Operation not permitted'"
+        )
+
+        descriptions=(
+            "find ~ -name 'MyTips' -type d -print 2>&1 | grep -v 'Operation not permitted'"
+        )
+
+        compadd -V "find_B" -x "-- Search for a directory named 'myTips', discard all error output, and remove any lines containing the matched string. --" -l -d descriptions -a compiledCompletions
+
+
+    elif [[ $SELECTEDWORD = "bat" ]]; then
+
+        compiledCompletions=(
+            "bat --list-themes | fzf --preview='bat --theme={} --color=always /path/to/file'"
+        )
+
+        descriptions=(
+            "bat --list-themes | fzf --preview='bat --theme={} --color=always /path/to/file'"
+        )
+
+        compadd -V "cat_A" -x "-- Preview the different color themes on a custom file. --" -l -d descriptions -a compiledCompletions
+
+    elif [[ $SELECTEDWORD = "caffeinate" ]]; then
+        
+        compiledCompletions=(
+            "caffeinate -uimd"
+        )
+
+        descriptions=(
+            "caffeinate -uimd"
+        )
+
+        compadd -V "caffeinate" -x "-- Keep operating system from falling asleep. --" -l -d descriptions -a compiledCompletions
+    
+
+    #elif [[ $SELECTEDWORD = "echo" ]]; then
+    #    
+    #    compiledCompletions=(
+    #        'echo -e "\\e[31m\\e[43mWHAM\\e[0m"'
+    #    )
+
+    #    descriptions=(
+    #        'echo -e "\e[31m\e[43mWHAM\e[0m"'
+    #    )
+
+    #    compadd -V "echo_A" -x "-- Colored Output. --" -l -d descriptions -a compiledCompletions
+
+    fi
+
+}

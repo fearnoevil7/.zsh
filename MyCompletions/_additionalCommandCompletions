@@ -1,0 +1,61 @@
+#compdef _additionalCommandCompletions
+
+_additionalCommandCompletions() {
+
+    #tutorialFunction
+
+	if [[ $words[1] = "brew" ]]; then
+		_retrieve_cache _brew
+    
+		return_code=$?
+    
+		if [[ $return_code -eq 0 ]];then
+			_alternative 'arguments:==> Built-in commands:(($BuiltInRegularCommands))' ':==> Built-in developer commands:(($BuiltInDeveloperCommands))'
+
+            #local curcontext='arguments:(($BuiltInRegularCommands)):_alternative'
+
+            #for key in ${(k)compstate}; do
+            #    echo "\nIndex: $key, Value: $compstate[$key]\n"
+            #done
+		else
+			echo "\nCache is empty"
+		fi
+    
+	fi
+}
+
+
+tutorialFunction() {  #Using Utility functions with keybindings breaks the format. Here's how to duplicate the format that utility functions display completions in using the compadd command.
+
+
+	local -a completions descriptions
+
+
+	# Fill the completions array with completion options
+	completions=(
+		'option1'
+		'option2'
+	# Add more completion options as needed
+	)
+
+	# Fill the descriptions array with descriptions corresponding to completions
+	descriptions=(
+		'option1       -- description for option 1'
+		'option2       -- description for option 2'
+	# Add more descriptions as needed, ensuring they correspond to completions
+	)
+
+	compadd -l -d descriptions -a completions
+
+	# You can use compadd multiple times
+	testarr=("test1" "test2" "test3" "test4") 
+
+	# Description appears at the top
+	#compadd -x "--  Short Description --" -a testarr
+
+	# Give the completions being passed a group name.  Headings appears with the completions it was called with.
+	#compadd -V "Group B" -x "--  Short Description --" -a testarr
+	
+	# Select completions by array index in this example we select the third element to the last element in the inputted completion array
+	compadd -V "Group B" -x "--  Short Description --" -a "testarr[3,-1]"
+}

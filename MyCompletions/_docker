@@ -1,0 +1,4919 @@
+#compdef docker
+
+
+helpPageTemplate1=(
+    "--add-host:<strings>: Add a custom host-to-IP mapping (format: 'host:ip')",
+    "--allow:<strings>: Allow extra privileged entitlement (e.g.,'network.host', 'security.insecure')",
+    "--annotation:<stringArray>: Add annotation to the image",
+    "--attest:<stringArray>: Attestation parameters (format: 'type=sbom,generator=image')",
+    "--build-arg:<stringArray>: Set build-time variables",
+    "--build-context:<stringArray>: Additional build contexts (e.g., name=path)",
+    "--builder:<string>: Override the configured builder instance (default 'desktop-linux')",
+    "--cache-from:<stringArray>: External cache sources (e.g., 'user/app:cache', 'type=local,src=path/to/dir')",
+    "--cache-to:<stringArray>: Cache export destinations (e.g.,'user/app:cache', 'type=local,dest=path/to/dir')",
+    "--cgroup-parent:<string>: Set the parent cgroup for the 'RUN' instructions during build",
+    "--file:<string>: Name of the Dockerfile (default: 'PATH/Dockerfile')"
+    "-f:<string>: Name of the Dockerfile (default: 'PATH/Dockerfile')"
+    "--iidfile:<string>: Write the image ID to the file"
+    "--label:<stringArray>: Set metadata for an image"
+    "--load:Shorthand for '--output=type=docker'"
+    "--metadata-file:<string>: Write build result metadata to the file"
+    "--network:<string>: Set the networking mode for the 'RUN' instructions during build (default 'default')"
+    "--no-cache:Do not use cache when building the image"
+    "--no-cache-filter:<stringArray>: Do not cache specified stages"
+    "--output:<stringArray>: Output destination (format: 'type=local,dest=path')"
+    "-o:<stringArray>: Output destination (format: 'type=local,dest=path')"
+    "--platform:<stringArray>: Set target platform for build"
+    "--progress:<string>: Set type of progress output ('auto', 'plain','tty'). Use plain to show container output (default 'auto')"
+    "--provenance:<string>: Shorthand for '--attest=type=provenance'"
+    "--pull:Always attempt to pull all referenced images"
+    "--push:Shorthand for '--output=type=registry'"
+    "--quiet:Suppress the build output and print image ID on success"
+    "-q:Suppress the build output and print image ID on success"
+    "--sbom:<string>: Shorthand for '--attest=type=sbom'"
+    "--secret:<stringArray>: Secret to expose to the build (format: 'id=mysecret[,src=/local/secret]')"
+    "--shm-size:<bytes> Size of '/dev/shm'"
+    "--ssh:<stringArray>: SSH agent socket or keys to expose to the build (format: 'default|<id>[=<socket>|<key>[,<key>]]')"
+    "--tag:<stringArray>: Name and optionally a tag (format: 'name:tag')"
+    "-t:<stringArray>: Name and optionally a tag (format: 'name:tag')"
+    "--target :<string>: Set the target build stage to build"
+    "--ulimit:<ulimit>: Ulimit options (default [])"
+)
+
+helpPageTemplate2=(
+    "--add-host:<list>  Add a custom host-to-IP mapping (host:ip)"
+    "--annotation:<map>  Add an annotation to the container (passed through to the OCI runtime) (default map[])"
+    "-a:<list>  Attach to STDIN, STDOUT or STDERR"
+    "--attach:<list>  Attach to STDIN, STDOUT or STDERR"
+    "--blkio-weight:<uint16>  Block IO (relative weight), between 10 and 1000, or 0 to disable (default 0)"
+    "--blkio-weight-device:<list>  Block IO weight (relative device weight) (default [])"
+    "--cap-add:<list>  Add Linux capabilities"
+    "--cap-drop:<list>  Drop Linux capabilities"
+    "--cgroup-parent:<string>  Optional parent cgroup for the container"
+    '--cgroupns:<string>  Cgroup namespace to use (host|private)'
+    "--cidfile:<string>  Write the container ID to the file"
+    "--cpu-count:<int>  CPU count (Windows only)"
+    "--cpu-percent:<int>  CPU percent (Windows only)"
+    "--cpu-period:<int>  Limit CPU CFS (Completely Fair Scheduler) period"
+    "--cpu-quota:<int>  Limit CPU CFS (Completely Fair Scheduler) quota"
+    "--cpu-rt-period:<int>  Limit CPU real-time period in microseconds"
+    "--cpu-rt-runtime:<int>  Limit CPU real-time runtime in microseconds"
+    "-c:<int>  CPU shares (relative weight)"
+    "--cpu-shares:<int>  CPU shares (relative weight)"
+    "--cpus:<decimal>  Number of CPUs"
+    "--cpuset-cpus:<string>  CPUs in which to allow execution (0-3, 0,1)"
+    "--cpuset-mems:<string>  MEMs in which to allow execution (0-3, 0,1)"
+    "-d:Run container in background and print container ID"
+    "--detach:Run container in background and print container ID"
+    "--detach-keys:<string>  Override the key sequence for detaching a container"
+    "--device:<list>  Add a host device to the container"
+    "--device-cgroup-rule:<list>  Add a rule to the cgroup allowed devices list"
+    "--device-read-bps:<list>  Limit read rate (bytes per second) from a device (default [])"
+    "--device-read-iops:<list>  Limit read rate (IO per second) from a device (default [])"
+    "--device-write-bps:<list>  Limit write rate (bytes per second) to a device (default [])"
+    "--device-write-iops:<list>  Limit write rate (IO per second) to a device (default [])"
+    "--disable-content-trust:Skip image verification (default true)"
+    "--dns:<list>  Set custom DNS servers"
+    "--dns-option:<list>  Set DNS options"
+    "--dns-search:<list>  Set custom DNS search domains"
+    "--domainname:<string>  Container NIS domain name"
+    "--entrypoint:<string>  Overwrite the default ENTRYPOINT of the image"
+    "-e:<list>  Set environment variables"
+    "--env:<list>  Set environment variables"
+    "--env-file:<list>  Read in a file of environment variables"
+    "--expose:<list>  Expose a port or a range of ports"
+    "--gpus:<gpu-request>  GPU devices to add to the container ('all' to pass all GPUs)"
+    "--group-add:<list>  Add additional groups to join"
+    "--health-cmd:<string>  Command to run to check health"
+    "--health-interval:<duration>  Time between running the check (ms|s|m|h) (default 0s)"
+    "--health-retries:<int>  Consecutive failures needed to report unhealthy"
+    "--health-start-interval:<duration>  Time between running the check during the start period (ms|s|m|h) (default 0s)"
+    "--health-start-period:<duration>  Start period for the container to initialize before starting health-retries countdown (ms|s|m|h) (default 0s)"
+    "--health-timeout:<duration>  Maximum time to allow one check to run (ms|s|m|h) (default 0s)"
+    "--help:Print usage"
+    "-h:<string>  Container host name"
+    "--hostname:<string>  Container host name"
+    "--init:Run an init inside the container that forwards signals and reaps processes"
+    "-i:Keep STDIN open even if not attached"
+    "--interactive:Keep STDIN open even if not attached"
+    "--io-maxbandwidth:<bytes>  Maximum IO bandwidth limit for the system drive (Windows only)"
+    "--io-maxiops:<uint>  Maximum IOps limit for the system drive (Windows only)"
+    "--ip:<string>  IPv4 address (e.g., 172.30.100.104)"
+    "--ip6:<string>  IPv6 address (e.g., 2001:db8::33)"
+    "--ipc:<string>  IPC mode to use"
+    "--isolation:<string>  Container isolation technology"
+    "--kernel-memory:<bytes>  Kernel memory limit"
+    "-l:<list>  Set meta data on a container"
+    "--label:<list>  Set meta data on a container"
+    "--label-file:<list>  Read in a line delimited file of labels"
+    "--link:<list>  Add link to another container"
+    "--link-local-ip:<list>  Container IPv4/IPv6 link-local addresses"
+    "--log-driver:<string>  Logging driver for the container"
+    "--log-opt:<list>  Log driver options"
+    "--mac-address:<string>  Container MAC address (e.g., 92:d0:c6:0a:29:33)"
+    "-m:<bytes>  Memory limit"
+    "--memory:<bytes>  Memory limit"
+    "--memory-reservation:<bytes>  Memory soft limit"
+    "--memory-swap:<bytes>  Swap limit equal to memory plus swap: '-1' to enable unlimited swap"
+    "--memory-swappiness:<int>  Tune container memory swappiness (0 to 100) (default -1)"
+    "--mount:<mount> Attach a filesystem mount to the container"
+    "--name:<string>  Assign a name to the container"
+    "--network:<network>  Connect a container to a network"
+    "--network-alias:<list>  Add network-scoped alias for the container"
+    "--no-healthcheck:Disable any container-specified HEALTHCHECK"
+    "--oom-kill-disable:Disable OOM Killer"
+    "--oom-score-adj:<int>  Tune host's OOM preferences (-1000 to 1000)"
+    "--pid:<string>  PID namespace to use"
+    "--pids-limit:<int>  Tune container pids limit (set -1 for unlimited)"
+    "--platform:<string>  Set platform if server is multi-platform capable"
+    "--privileged:Give extended privileges to this container"
+    "-p:<list>  Publish a container's port(s) to the host"
+    "--publish:<list>  Publish a container's port(s) to the host"
+    "-P:Publish all exposed ports to random ports"
+    "--publish-all:Publish all exposed ports to random ports"
+    "--pull:<string>  Pull image before running ('always', 'missing', 'never') (default "missing")"
+    "-q:Suppress the pull output"
+    "--quiet:Suppress the pull output"
+    "--read-only:Mount the container's root filesystem as read only"
+    "--restart:<string>  Restart policy to apply when a container exits (default 'no')"
+    "--rm:Automatically remove the container when it exits"
+    "--runtime:<string>  Runtime to use for this container"
+    "--security-opt:<list>  Security Options"
+    "--shm-size:<bytes>  Size of /dev/shm"
+    "--sig-proxy:Proxy received signals to the process (default true)"
+    "--stop-signal:<string>  Signal to stop the container"
+    "--stop-timeout:<int>  Timeout (in seconds) to stop a container"
+    "--storage-opt:<list>  Storage driver options for the container"
+    "--sysctl:<map>  Sysctl options (default map[])"
+    "--tmpfs:<list>  Mount a tmpfs directory"
+    "-t:Allocate a pseudo-TTY"
+    "--tty:Allocate a pseudo-TTY"
+    "--ulimit:<ulimit>  Ulimit options (default [])"
+    "-u:<string>  Username or UID (format: <name|uid>[:<group|gid>])"
+    "--user:<string>  Username or UID (format: <name|uid>[:<group|gid>])"
+    "--userns:<string>  User namespace to use"
+    "--uts:<string>  UTS namespace to use"
+    "-v:<list>  Bind mount a volume"
+    "--volume:<list>  Bind mount a volume"
+    "--volume-driver:<string>  Optional volume driver for the container"
+    "--volumes-from:<list>  Mount volumes from the specified container(s)"
+    "-w:<string>  Working directory inside the container"
+    "--workdir:<string>  Working directory inside the container"
+)
+
+
+attachCommandHelpOutput=(
+    "--detach-keys:<string>  Override the key sequence for detaching a container"
+    "--no-stdin:Do not attach STDIN"
+    "--sig-proxy:Proxy all received signals to the process (default true)"
+)
+
+
+commitCommandHelpOutput=(
+    "-a:<string>  Author (e.g., 'John Hannibal Smith <hannibal@a-team.com>')"
+    "--author:<string>  Author (e.g., 'John Hannibal Smith <hannibal@a-team.com>')"
+    "-c:<list>  Apply Dockerfile instruction to the created image"
+    "--change:<list>  Apply Dockerfile instruction to the created image"
+    "-m:<string>  Commit message"
+    "--message:<string>  Commit message"
+    "-p:Pause container during commit (default true)"
+    "--pause:Pause container during commit (default true)"
+)
+
+
+cpCommandHelpOutput=(
+    "-a:Archive mode (copy all uid/gid information)"
+    "--archive:Archive mode (copy all uid/gid information)"
+    "-L:Always follow symbol link in SRC_PATH"
+    "--follow-link:Always follow symbol link in SRC_PATH"
+    "-q:Suppress progress output during copy. Progress output is"
+    "--quiet:Suppress progress output during copy. Progress output is"
+)
+
+
+createCommandHelpOutput=(
+    "--add-host:<list>  Add a custom host-to-IP mapping (host:ip)"
+    "--annotation:<map>  Add an annotation to the container (passed through to the OCI runtime) (default map[])"
+    "-a:<list>  Attach to STDIN, STDOUT or STDERR"
+    "--attach:<list>  Attach to STDIN, STDOUT or STDERR"
+    "--blkio-weight:<uint16>  Block IO (relative weight), between 10 and 1000, or 0 to disable (default 0)"
+    "--blkio-weight-device:<list>  Block IO weight (relative device weight) (default [])"
+    "--cap-add:<list>  Add Linux capabilities"
+    "--cap-drop:<list>  Drop Linux capabilities"
+    "--cgroup-parent:<string>  Optional parent cgroup for the container"
+    "--cgroupns:<string>  Cgroup namespace to use (host|private)"
+    "--cidfile:<string>  Write the container ID to the file"
+    "--cpu-count:<int>  CPU count (Windows only)"
+    "--cpu-percent:<int>  CPU percent (Windows only)"
+    "--cpu-period:<int>  Limit CPU CFS (Completely Fair Scheduler) period"
+    "--cpu-quota:<int>  Limit CPU CFS (Completely Fair Scheduler) quota"
+    "--cpu-rt-period:<int>  Limit CPU real-time period in microseconds"
+    "--cpu-rt-runtime:<int>  Limit CPU real-time runtime in microseconds"
+    "-c:<int>  CPU shares (relative weight)"
+    "--cpu-shares:<int>  CPU shares (relative weight)"
+    "--cpus:<decimal>  Number of CPUs"
+    "--cpuset-cpus:<string>  CPUs in which to allow execution (0-3, 0,1)"
+    "--cpuset-mems:<string>  MEMs in which to allow execution (0-3, 0,1)"
+    "--device:<list>  Add a host device to the container"
+    "--device-cgroup-rule:<list>  Add a rule to the cgroup allowed devices list"
+    "--device-read-bps:<list>  Limit read rate (bytes per second) from a device (default [])"
+    "--device-read-iops:<list>  Limit read rate (IO per second) from a device (default [])"
+    "--device-write-bps:<list>  Limit write rate (bytes per second) to a device (default [])"
+    "--device-write-iops:<list>  Limit write rate (IO per second) to a device (default [])"
+    "--disable-content-trust:Skip image verification (default true)"
+    "--dns:<list>  Set custom DNS servers"
+    "--dns-option:<list>                  Set DNS options"
+    "--dns-search:<list>  Set custom DNS search domains"
+    "--domainname:<string>  Container NIS domain name"
+    "--entrypoint:<string>  Overwrite the default ENTRYPOINT of the image"
+    "-e:<list>  Set environment variables"
+    "--env:<list>  Set environment variables"
+    "--env-file:<list>  Read in a file of environment variables"
+    "--expose:<list>  Expose a port or a range of ports"
+    "--gpus:gpu-request GPU devices to add to the container ('all' to pass all GPUs)"
+    "--group-add:list>  Add additional groups to join"
+    "--health-cmd:<string>  Command to run to check health"
+    "--health-interval:<duration>  Time between running the check (ms|s|m|h) (default 0s)"
+    "--health-retries:<int>  Consecutive failures needed to report unhealthy"
+    "--health-start-interval:<duration>  Time between running the check during the start period (ms|s|m|h) (default 0s)"
+    "--health-start-period:<duration>  Start period for the container to initialize before starting health-retries countdown (ms|s|m|h) (default 0s)"
+    "--health-timeout:<duration>  Maximum time to allow one check to run (ms|s|m|h) (default 0s)"
+    "--help:Print usage"
+    "-h:<string>  Container host name"
+    "--hostname:<string>  Container host name"
+    "--init:Run an init inside the container that forwards signals and reaps processes"
+    "-i:Keep STDIN open even if not attached"
+    "--interactive:Keep STDIN open even if not attached"
+    "--io-maxbandwidth:<bytes>  Maximum IO bandwidth limit for the system drive (Windows only)"
+    "--io-maxiops:<uint>  Maximum IOps limit for the system drive (Windows only)"
+    "--ip:<string>  IPv4 address (e.g., 172.30.100.104)"
+    "--ip6:<string>  IPv6 address (e.g., 2001:db8::33)"
+    "--ipc:<string>  IPC mode to use"
+    "--isolation:<string>  Container isolation technology"
+    "--kernel-memory:<bytes>  Kernel memory limit"
+    "-l:<list>  Set meta data on a container"
+    "--label:<list>  Set meta data on a container"
+    "--label-file:<list>  Read in a line delimited file of labels"
+    "--link:<list>  Add link to another container"
+    "--link-local-ip:<list>  Container IPv4/IPv6 link-local addresses"
+    "--log-driver:<string>  Logging driver for the container"
+    "--log-opt:<list>  Log driver options"
+    "--mac-address:<string>  Container MAC address (e.g., 92:d0:c6:0a:29:33)"
+    "-m:Memory limit"
+    "--memory:<bytes>  Memory limit"
+    "--memory-reservation:<bytes>  Memory soft limit"
+    "--memory-swap:<bytes>  Swap limit equal to memory plus swap: '-1' to enable unlimited swap"
+    "--memory-swappiness:<int>  Tune container memory swappiness (0 to 100) (default -1)"
+    "--mount:<mount>  Attach a filesystem mount to the container"
+    "--name:<string>  Assign a name to the container"
+    "--network:<network>  Connect a container to a network"
+    "--network-alias:<list>  Add network-scoped alias for the container"
+    "--no-healthcheck:Disable any container-specified HEALTHCHECK"
+    "--oom-kill-disable:Disable OOM Killer"
+    "--oom-score-adj:<int>  Tune host's OOM preferences (-1000 to 1000)"
+    "--pid:<string>  PID namespace to use"
+    "--pids-limit:<int>  Tune container pids limit (set -1 for unlimited)"
+    "--platform:<string>  Set platform if server is multi-platform capable"
+    "--privileged:Give extended privileges to this container"
+    "-p:<list>  Publish a container's port(s) to the host"
+    "--publish:<list>  Publish a container's port(s) to the host"
+    "-P:Publish all exposed ports to random ports"
+    "--publish-all:Publish all exposed ports to random ports"
+    "--pull:<string>  Pull image before creating ('always', '|missing', 'never') (default 'missing')"
+    "-q:Suppress the pull output"
+    "--quiet:Suppress the pull output"
+    "--read-only:Mount the container's root filesystem as read only"
+    "--restart:<string>  Restart policy to apply when a container exits (default 'no')"
+    "--rm:Automatically remove the container when it exits"
+    "--runtime:<string>  Runtime to use for this container"
+    "--security-opt:<list>  Security Options"
+    "--shm-size:<bytes>  Size of /dev/shm"
+    "--stop-signal:<string>  Signal to stop the container"
+    "--stop-timeout:<int>  Timeout (in seconds) to stop a container"
+    "--storage-opt:<list>  Storage driver options for the container"
+    "--sysctl:<map>  Sysctl options (default map[])"
+    "--tmpfs:<list>  Mount a tmpfs directory"
+    "-t:Allocate a pseudo-TTY"
+    "--tty:Allocate a pseudo-TTY"
+    "--ulimit:<ulimit>  Ulimit options (default [])"
+    "-u:<string>  Username or UID (format: <name|uid>[:<group|gid>])"
+    "--user:<string>  Username or UID (format: <name|uid>[:<group|gid>])"
+    "--userns:<string>  User namespace to use"
+    "--uts:<string>  UTS namespace to use"
+    "-v:<list>  Bind mount a volume"
+    "--volume:<list>  Bind mount a volume"
+    "--volume-driver:<string>  Optional volume driver for the container"
+    "--volumes-from:<list>  Mount volumes from the specified container(s)"
+    "-w:<string>  Working directory inside the container"
+    "--workdir:<string>  Working directory inside the container"
+)
+
+eventsCommandHelpOutput=(
+                    "-f:<filter>  Filter output based on conditions provided"
+                    "--filter:<filter>  Filter output based on conditions provided"
+                    "--format:<string>  Format output using a custom template."
+                    "--since:<string>  Show all events created since timestamp"
+                    "--until:<string>  Stream events until this timestamp"
+)
+
+
+exportCommandHelpOutput=(
+                    "-o:<string>  Write to a file, instead of STDOUT"
+                    "--output:<string>  Write to a file, instead of STDOUT"
+)
+
+
+inspectCommandHelpOutput=(
+                    "-f:<string>  Format output using a custom template:"
+                    "--format:<string>  Format output using a custom template:"
+                    "-s:Display total file sizes"
+                    "--size:Display total file sizes"
+)
+
+
+historyCommandHelpOutput=(
+                    "--format:<string>  Format output using a custom template:"
+                    "-H:Print sizes and dates in human readable format (default true)"
+                    "--human:Print sizes and dates in human readable format (default true)"
+                    "--no-trunc:Don't truncate output"
+                    "-q:Only show image IDs"
+                    "--quiet:Only show image IDs"
+)
+
+
+importCommandHelpOutput=(
+                    "-c:<list>  Apply Dockerfile instruction to the created image"
+                    "--change:<list>  Apply Dockerfile instruction to the created image"
+                    "-m:<string>  Set commit message for imported image"
+                    "--message:<string>  Set commit message for imported image"
+                    "--platform:<string>  Set platform if server is multi-platform capable"
+)
+
+
+killCommandHelpOutput=(
+                    "-s<string>  Signal to send to the container"
+                    "--signal:<string>  Signal to send to the container"
+)
+
+
+loadCommandHelpOutput=(
+                    "-i:<string>  Read from tar archive file, instead of STDIN"
+                    "--input:<string>  Read from tar archive file, instead of STDIN"
+                    "-q:Suppress the load output"
+                    "--quiet:Suppress the load output"
+)
+
+
+logsCommandHelpOutput=(
+                    "--details:Show extra details provided to logs"
+                    "-f:Follow log output"
+                    "--follow:Follow log output"
+                    "--since:<string>  Show logs since timestamp (e.g. '2013-01-02T13:23:37Z') or relative (e.g. '42m' for 42 minutes)"
+                    "-n:Number of lines to show from the end of the logs (default 'all')"
+                    "--tail:<string>  Number of lines to show from the end of the logs (default 'all')"
+                    "-t:Show timestamps"
+                    "--timestamps:Show timestamps"
+                    "--until:<string>  Show logs before a timestamp (e.g. '2013-01-02T13:23:37Z') or relative (e.g. '42m' for 42 minutes)"
+)
+
+
+restartCommandHelpOutput=(
+                    "-s:<string>  Signal to send to the container"
+                    "--signal:<string>  Signal to send to the container"
+                    "-t:<int>  Seconds to wait before killing the container"
+                    "--time:<int>  Seconds to wait before killing the container"
+)
+
+
+rmCommandHelpOutput=(
+                    "-f:Force the removal of a running container (uses SIGKILL)"
+                    "--force:Force the removal of a running container (uses SIGKILL)"
+                    "-l:Remove the specified link"
+                    "--link:Remove the specified link"
+                    "-v:Remove anonymous volumes associated with the container"
+                    "--volumes:Remove anonymous volumes associated with the container"
+)
+
+
+saveCommandHelpOutput=(
+                    "-o:<string>  Write to a file, instead of STDOUT"
+                    "--output:<string>  Write to a file, instead of STDOUT"
+)
+
+
+startCommandHelpOutput=(
+                    "-a:Attach STDOUT/STDERR and forward signals"
+                    "--attach:Attach STDOUT/STDERR and forward signals"
+                    "--checkpoint:<string>  Restore from this checkpoint"
+                    "--checkpoint-dir:<string>  Use a custom checkpoint storage directory"
+                    "--detach-keys:<string>  Override the key sequence for detaching a container"
+                    "-i:Attach container's STDIN"
+                    "--interactive:Attach container's STDIN"
+)
+
+
+statsCommandHelpOutput=(
+                    "-a:Show all containers (default shows just running)"
+                    "--all:Show all containers (default shows just running)"
+                    "--format:<string>  Format output using a custom template."
+                    "--no-stream:Disable streaming stats and only pull the first result"
+                    "--no-trunc:Do not truncate output"
+)
+
+
+stopCommandHelpOutput=(
+                    "-s:<string>  Signal to send to the container"
+                    "--signal:<string>  Signal to send to the container"
+                    "-t:<int>  Seconds to wait before killing the container"
+                    "--time:<int>  Seconds to wait before killing the container"
+)
+
+
+updateCommandHelpOutput=(
+                    "--blkio-weight:<uint16>  Block IO (relative weight), between 10 and 1000, or 0 to disable (default 0)"
+                    "--cpu-period:<int>  Limit CPU CFS (Completely Fair Scheduler) period"
+                    "--cpu-quota:<int>  Limit CPU CFS (Completely Fair Scheduler) quota"
+                    "--cpu-rt-period:<int>  Limit the CPU real-time period in microseconds"
+                    "--cpu-rt-runtime:<int>  Limit the CPU real-time runtime in microseconds"
+                    "-c:<int>  CPU shares (relative weight)"
+                    "--cpu-shares:<int>  CPU shares (relative weight)"
+                    "--cpus:<decimal>  Number of CPUs"
+                    "--cpuset-cpus:<string>  CPUs in which to allow execution (0-3, 0,1)"
+                    "--cpuset-mems:<string>  MEMs in which to allow execution (0-3, 0,1)"
+                    "-m:Memory limit"
+                    "--memory:bytes               Memory limit"
+                    "--memory-reservation:<bytes>  Memory soft limit"
+                    "--memory-swap:<bytes>  Swap limit equal to memory plus swap: -1 to enable unlimited swap"
+                    "--pids-limit:<int>  Tune container pids limit (set -1 for unlimited)"
+                    "--restart:<string>  Restart policy to apply when a container exits"
+)
+
+
+_docker() {
+
+#if [[ $words[3] ]]; then
+#    echo "Word 2 is: $words[2]"
+    #    echo "Word 3 is: $words[3]"
+    #fi
+
+	# Retrieve Cache
+	_retrieve_cache _docker
+
+	return_code=$?
+	
+	# Generate Cache
+	if [[ $return_code -ne 0 ]]; then
+		_generateCache
+		_retrieve_cache _docker
+	fi
+
+	# Complete 1st argument
+	if [[ $CURRENT -eq 2 ]]; then
+		_arguments '::Common Commands:(($commonCommands[@]))' '::Management Commands:(($managementCommands[@]))' '::Swarm Commands:(($swarmCommands[@]))' '::Commands:(($cmds[@]))' '::Global Options:(($globalOptions[@]))'
+	fi
+
+	# Complete options for "docker <argument> [-option --option]"
+	if [[ $CURRENT -eq 3 ]]; then	
+        typeset -a argumentOptions
+        typeset -a commandCompletions
+        typeset -a managmentCommandCompletions
+        
+		#echo "$words[2]"
+        if [[ $words[2] = "build" ]]; then
+
+            _describe 'Options' helpPageTemplate1
+            _message -r '
+Usage:  docker buildx build [OPTIONS] PATH | URL | -
+
+Start a build
+
+Aliases:
+  buildx build, docker buildx b
+    '
+
+
+        elif [[ $words[2] = "exec" ]]; then
+                argumentOptions=(
+                    "-d:Detached mode: run command in the background"
+                    "--detach:Detached mode: run command in the background"
+                    "--detach-keys:<string>: Override the key sequence for detaching a container"
+                    "-e:<list>: Set environment variables"
+                    "--env:<list>: Set environment variables"
+                    "--env-file: <list>: Read in a file of environment variables"
+                    "-i: Keep STDIN open even if not attached"
+                    "--interactive: Keep STDIN open even if not attached"
+                    "--privileged: Give extended privileges to the command"
+                    "--tty:Allocate a pseudo-TTY"
+                    "-t:Allocate a pseudo-TTY"
+                    "-u:<string>: Username or UID (format: '<name|uid>[:<group|gid>]')"
+                    "--user:<string>: Username or UID (format: '<name|uid>[:<group|gid>]')"
+                    "-w:<string>: Working directory inside the container"
+                    "--workdir:<string>: Working directory inside the container"
+                )
+
+                _describe 'Options' argumentOptions
+
+                _message -r '
+Usage:  docker exec [OPTIONS] CONTAINER COMMAND [ARG...]
+
+Execute a command in a running container
+    
+Aliases:
+  docker container exec, docker exec
+    '
+
+
+        elif [[ $words[2] = "images" ]]; then
+                
+                    argumentOptions=(
+                        "--all:Show all images (default hides intermediate images)"
+                        "-a:Show all images (default hides intermediate images)"
+                        "--digests:Show digests"
+                        "-f:<filter>: Filter output based on conditions provided"
+                        "--filter:<filter>: Filter output based on conditions provided"
+                        "--format:<string>: Format output using a custom template."
+                        "--no-trunc:Don't truncate output"
+                        "-q:Only show image IDs"
+                        "--quiet:Only show image IDs"
+                    )
+
+                    _describe 'Options' argumentOptions
+
+                    _message -r '
+Usage:  docker images [OPTIONS] [REPOSITORY[:TAG]]
+
+List images
+
+Aliases:
+  docker image ls, docker image list, docker images
+    '
+
+        elif [[ $words[2] = "info" ]]; then
+                
+                    argumentOptions=(
+                          "-f:<string>: Format output using a custom template:"
+                          "--format:<string>: Format output using a custom template:"
+                    )
+
+                    _describe 'Options' argumentOptions
+
+                    _message -r '
+Usage:  docker info [OPTIONS]
+                    
+Display system-wide information
+
+Aliases:
+  docker system info, docker info
+    '
+
+
+        elif [[ $words[2] = "login" ]]; then
+                
+                    argumentOptions=(
+                          "-h:Help for login"
+                          "--help:Help for login"
+                          "-p:<string>: password"
+                          "--password:<string>: password"
+                          "--password-stdin:Take the password from stdin"
+                          "-u:<string>: username"
+                          "--username:<string>: username"
+                    )
+
+                    _describe 'Flags' argumentOptions
+
+                    _message -r '
+Usage:
+  docker login [OPTIONS] [SERVER] [flags]
+  docker login [command]
+
+Available Commands:
+  azure       Log in to azure
+                                '
+
+        elif [[ $words[2] = "logout" ]]; then
+                
+                    argumentOptions=(
+                          "-h:Help for logout"
+                          "--help:Help for logout"
+                    )
+
+                    _describe 'Flags' argumentOptions
+
+                    _message -r '
+Log out from a Docker registry or cloud backend.
+If no server is specified, the default is defined by the daemon.
+
+Usage:
+  docker logout [SERVER] [flags]
+  docker logout [command]
+
+Available Commands:
+  azure       Logout from Azure
+                                '
+
+
+        elif [[ $words[2] = "ps" ]]; then
+                
+                    argumentOptions=(
+                          "-a:Show all containers (default shows just running)"
+                          "--all:Show all containers (default shows just running)"
+                          "-f:<filter>  Filter output based on conditions provided"
+                          "--filter:<filter>  Filter output based on conditions provided"
+                          "--format:<string>  Format output using a custom template."
+                          "-n:<int>  Show n last created containers (includes all states) (default -1)"
+                          "--last:<int>  Show n last created containers (includes all states) (default -1)"
+                          "-l:Show the latest created container (includes all states)"
+                          "--latest:Show the latest created container (includes all states)"
+                          "--no-trunc:Don't truncate output"
+                          "-q:Only display container IDs"
+                          "--quiet:Only display container IDs"
+                          "-s:Display total file sizes"
+                          "--size:Display total file sizes"
+                    )
+
+                    _describe 'Options' argumentOptions
+
+                    _message -r '
+Usage:  docker ps [OPTIONS]
+
+List containers
+
+Aliases:
+  docker container ls, docker container list, docker container ps, docker ps
+                                '
+
+        elif [[ $words[2] = "pull" ]]; then
+                
+                    argumentOptions=(
+                        "-a:Download all tagged images in the repository"
+                        "--all-tags:Download all tagged images in the repository"
+                        "--disable-content-trust:Skip image verification (default true)"
+                        "--platform:<string>  Set platform if server is multi-platform capable"
+                        "-q:Suppress verbose output"
+                        "--quiet:Suppress verbose output"
+                    )
+
+                    _describe 'Options' argumentOptions
+
+                    _message -r '
+Usage:  docker pull [OPTIONS] NAME[:TAG|@DIGEST]
+
+Download an image from a registry
+
+Aliases:
+  docker image pull, docker pull
+                                '
+
+        elif [[ $words[2] = "push" ]]; then
+                
+                    argumentOptions=(
+                        "-a:Push all tags of an image to the repository"
+                        "--all-tags:Push all tags of an image to the repository"
+                        "--disable-content-trust:Skip image signing (default true)"
+                        "-q:Suppress verbose output"
+                        "--quiet:Suppress verbose output"
+                    )
+
+                    _describe 'Options' argumentOptions
+
+                    _message -r '
+Usage:  docker push [OPTIONS] NAME[:TAG]
+
+Upload an image to a registry
+
+Aliases:
+  docker image push, docker push
+                                '
+
+
+        elif [[ $words[2] = "run" ]]; then
+                
+                    _describe 'Options' helpPageTemplate2
+
+                    _message -r '
+Create and run a new container from an image
+
+Aliases:
+  docker container run, docker run
+                                '
+
+        elif [[ $words[2] = "search" ]]; then
+                
+            argumentOptions=(
+                "-f:<filter>  Filter output based on conditions provided"
+                "--filter:<filter>  Filter output based on conditions provided"
+                "--format:<string>  Pretty-print search using a Go template"
+                "--limit:<int>  Max number of search results"
+                "--no-trunc:Don't truncate output"
+            )
+
+            _describe 'Options' argumentOptions
+
+            _message -r '
+Usage:  docker search [OPTIONS] TERM
+
+Search Docker Hub for images
+                '
+
+
+        elif [[ $words[2] = "version" ]]; then
+                
+            argumentOptions=(
+                  "-f:<string>       Format the output. Values: [pretty | json]. (Default: pretty)"
+                  "--format:<string>       Format the output. Values: [pretty | json]. (Default: pretty)"
+                  "-h:Help for version"
+                  "--help:Help for version"
+                  "--kubeconfig:<string>  Kubernetes config file"
+            )
+
+            _describe 'Options' argumentOptions
+
+            _message -r '
+Show the Docker version information
+
+Usage:
+  docker version [flags]
+                '
+
+        elif [[ $words[2] = "builder" || $words[2] = "buildx" ]]; then
+
+            argumentOptions=(
+                  "--builder:<string>  Override the configured builder instance (default 'desktop-linux')"
+            )
+            managmentCommandCompletions=(
+                  "imagetools:Commands to work on images in registry"
+            )
+            commandCompletions=(
+                  "bake:Build from a file"
+                  "build:Start a build"
+                  "create:Create a new builder instance"
+                  "du:Disk usage"
+                  "inspect:Inspect current builder instance"
+                  "ls:List builder instances"
+                  "prune:Remove build cache"
+                  "rm:Remove a builder instance"
+                  "stop:Stop builder instance"
+                  "use:Set the current builder instance"
+                  "version:Show buildx version information"
+            )
+
+
+            #_arguments '::Management Commands:(($managmentCommandCompletions))' '::Options:(($argumentOptions))' '::Commands:(($commandCompletions))' 
+            _alternative 'Options:Options:(($argumentOptions))' 'Management Commands:Management Commands:(($managmentCommandCompletions))' 'Commands:Commands:(($commandCompletions))' 
+
+
+            _message -r '
+Show the Docker version information
+
+Usage:
+  docker version [flags]
+                        '
+
+
+        elif [[ $words[2] = "checkpoint" ]]; then
+
+            argumentOptions=(
+                  "create:Create a checkpoint from a running container"
+                  "ls:<List>  checkpoints for a container"
+                  "rm:Remove a checkpoint"
+            )
+
+            _describe 'Commands' argumentOptions
+
+            _message -r '
+Usage:  docker checkpoint COMMAND
+
+Manage checkpoints
+                        '
+
+        elif [[ $words[2] = "compose" ]]; then
+            argumentOptions=(
+                "--ansi:<string>  Control when to print ANSI control characters ('never'|'always'|'auto') (default 'auto')"
+                "--compatibility:Run compose in backward compatibility mode"
+                "--dry-run:Execute command in dry run mode"
+                "--env-file:<stringArray>  Specify an alternate environment file"
+                "-f:<stringArray>  Compose configuration files"
+                "--file:<stringArray>  Compose configuration files"
+                "--parallel:<int>  Control max parallelism, -1 for unlimited (default -1)"
+                "--profile:<stringArray>  Specify a profile to enable"
+                "--progress:<string>  Set type of progress output (auto, tty, plain, quiet) (default 'auto')"
+                "--project-directory:<string>  Specify an alternate working directory (default: the path of the, first specified, Compose file)"
+                "-p:<string>  Project name"
+                "--project-name:<string>  Project name"
+            )
+
+            commandCompletions=(
+                "attach:Attach local standard input, output, and error streams to a service's running container"
+                "build:Build or rebuild services"
+                "config:Parse, resolve and render compose file in canonical format"
+                "cp:Copy files/folders between a service container and the local filesystem"
+                "create:Creates containers for a service"
+                "down:Stop and remove containers, networks"
+                "events:Receive real time events from containers"
+                "exec:Execute a command in a running container"
+                "images:List images used by the created containers"
+                "kill:Force stop service containers"
+                "logs:View output from containers"
+                "ls:List running compose projects"
+                "pause:Pause services"
+                "port:Print the public port for a port binding"
+                "ps:List containers"
+                "pull:Pull service images"
+                "push:Push service images"
+                "restart:Restart service containers"
+                "rm:Removes stopped service containers"
+                "run:Run a one-off command on a service"
+                "scale:Scale services"
+                "start:Start services"
+                "stats:Display a live stream of container(s) resource usage statistics"
+                "stop:Stop services"
+                "top:Display the running processes"
+                "unpause:Unpause services"
+                "up:Create and start containers"
+                "version:Show the Docker Compose version information"
+                "wait:Block until the first service container stops"
+                "watch:Watch build context for service and rebuild/refresh containers when files are updated"
+            )
+
+            _alternative 'Options:Options:(($argumentOptions))' 'Commands:Commands:(($commandCompletions))' 
+
+            _message -r '
+Usage:  docker compose [OPTIONS] COMMAND
+
+Define and run multi-container applications with Docker
+                        '
+
+        elif [[ $words[2] = "container" ]]; then
+            argumentOptions=(
+                  "attach:Attach local standard input, output, and error streams to a running container"
+                  "commit:Create a new image from a container's changes"
+                  "cp:Copy files/folders between a container and the local filesystem"
+                  "create:Create a new container"
+                  "diff:Inspect changes to files or directories on a container's filesystem"
+                  "exec:Execute a command in a running container"
+                  "export:Export a container's filesystem as a tar archive"
+                  "inspect:Display detailed information on one or more containers"
+                  "kill:Kill one or more running containers"
+                  "logs:Fetch the logs of a container"
+                  "ls:List containers"
+                  "pause:Pause all processes within one or more containers"
+                  "port:List port mappings or a specific mapping for the container"
+                  "prune:Remove all stopped containers"
+                  "rename:Rename a container"
+                  "restart:Restart one or more containers"
+                  "rm:Remove one or more containers"
+                  "run:Create and run a new container from an image"
+                  "start:Start one or more stopped containers"
+                  "stats:Display a live stream of container(s) resource usage statistics"
+                  "stop:Stop one or more running containers"
+                  "top:Display the running processes of a container"
+                  "unpause:Unpause all processes within one or more containers"
+                  "update:Update configuration of one or more containers"
+                  "wait:Block until one or more containers stop, then print their exit codes"
+            )
+
+            _describe 'Commands' argumentOptions
+
+            _message -r '
+Usage:  docker container COMMAND
+
+Manage containers
+                        '
+
+        elif [[ $words[2] = "context" ]]; then
+            argumentOptions=(
+                "-h:Help for context"
+                "--help:Help for context"
+            )
+
+            commandCompletions=(
+                "create:Create new context"
+                "export:Export a context to a tar or kubeconfig file"
+                "import:Import a context from a tar or zip file"
+                "inspect:Display detailed information on one or more contexts"
+                "list:List available contexts"
+                "rm:Remove one or more contexts"
+                "show:Print the current context"
+                "update:Update a context"
+                "use:Set the default context"
+            )
+
+            #_describe 'Commands' argumentOptions
+            _alternative 'Commands:Commands:(($commandCompletions))' 'Options:Flags:(($argumentOptions))' 
+
+            _message -r '
+Manage contexts
+
+Usage:
+  docker context [command]
+                        '
+
+        elif [[ $words[2] = "debug" ]]; then
+            argumentOptions=(
+                "-c:<string>  Evaluate the specified commands instead, passing additional positional arguments through $argv."
+                "--command:<string>  Evaluate the specified commands instead, passing additional positional arguments through $argv."
+                "--host:<string>  Daemon docker socket to connect to. E.g.: 'ssh://root@example.org', 'unix:///some/path/docker.sock'"
+                "--preserve-user:Running containers only: Use same user as the running container. Default is root."
+                "--privileged:Running containers only: Give privileges to the shell (all capabilities)."
+                "--shell:<shell>  Select a shell. Supported: "bash", "fish", "zsh", "auto". (default auto)"
+                "--version:Display version of the docker-debug plugin"
+            )
+
+            #_describe 'Commands' argumentOptions
+            _describe 'Options' argumentOptions
+
+            _message -r '
+Usage:  docker debug [OPTIONS] {CONTAINER|IMAGE}
+
+Get an enhanced shell with additional tools into any container or image
+                        '
+
+        elif [[ $words[2] = "dev" ]]; then
+            argumentOptions=(
+                "-s:<string>  Sets the path to the unix socket or pipe to be targeted. Can also be set through the environment variable DOCKER_DEV_ENVS_SOCKET_PATH"
+                "--socket:<string>  Sets the path to the unix socket or pipe to be targeted. Can also be set through the environment variable DOCKER_DEV_ENVS_SOCKET_PATH"
+                "-v:Display version of the dev plugin"
+                "--version:Display version of the dev plugin"
+            )
+
+            managmentCommandCompletions=(
+                "service:Service management on a dev environment"
+            )
+
+            commandCompletions=(
+                "check:Check Dev Environments"
+                "create:Create a new dev environment"
+                "list:Lists all Dev Environments"
+                "logs:Traces logs from a dev environment"
+                "open:Open Dev Environment with the IDE"
+                "rm:Removes a dev environment"
+                "start:Starts a dev environment"
+                "stop:Stops a dev environment"
+                "version:Show the Docker Dev version information"
+            )
+
+            #_describe 'Commands' argumentOptions
+            _alternative 'Commands:Commands:(($commandCompletions))' 'Management Commands:Management Commands:(($managmentCommandCompletions))' 'Options:Options:(($argumentOptions))' 
+
+            _message -r '
+Manage contexts
+
+Usage:
+  docker context [command]
+                        '
+
+        elif [[ $words[2] = "extension" ]]; then
+            argumentOptions=(
+                "--socket:<string>  The Desktop extension manager socket"
+            )
+
+            managmentCommandCompletions=(
+                "dev:Extension development helpers"
+            )
+
+            commandCompletions=(
+                "init:Create a new Docker Extension based on a template."
+                "install:Install a Docker extension with the specified image"
+                "ls:List installed Docker extensions"
+                "rm:Remove a Docker extension"
+                "share:Generate a link to share the extension."
+                "update:Remove and re-install a Docker extension"
+                "validate:Validate an extension image or metadata file"
+                "version:Print the client and server versions"
+            )
+
+            #_describe 'Commands' argumentOptions
+            _alternative 'Commands:Commands:(($commandCompletions))' 'Management Commands:Management Commands:(($managmentCommandCompletions))' 'Options:Options:(($argumentOptions))' 
+
+            _message -r '
+Usage:  docker extension [OPTIONS] COMMAND
+
+Manages Docker extensions
+                        '
+
+        elif [[ $words[2] = "feedback" ]]; then
+            _message -r '
+Usage:  docker feedback
+
+Provide feedback in the terminal!
+                        '
+
+        elif [[ $words[2] = "image" ]]; then
+            argumentOptions=(
+                "build:Build an image from a Dockerfile"
+                "history:Show the history of an image"
+                "import:Import the contents from a tarball to create a filesystem image"
+                "inspect:Display detailed information on one or more images"
+                "load:Load an image from a tar archive or STDIN"
+                "ls:List images"
+                "prune:Remove unused images"
+                "pull:Download an image from a registry"
+                "push:Upload an image to a registry"
+                "rm:Remove one or more images"
+                "save:Save one or more images to a tar archive (streamed to STDOUT by default)"
+                "tag:Create a tag TARGET_IMAGE that refers to SOURCE_IMAGE"
+            )
+            _describe 'Commands' argumentOptions
+            _message -r '
+Usage:  docker image COMMAND
+
+Manage images
+                        '
+
+        elif [[ $words[2] = "init" ]]; then
+            argumentOptions=(
+                "--version:Display version of the init plugin"
+            )
+            _describe 'Commands' argumentOptions
+            _message -r '
+Usage:  docker init [OPTIONS]
+
+Creates Docker-related starter files for your project
+                        '
+
+        elif [[ $words[2] = "manifest" ]]; then
+            argumentOptions=(
+                "annotate:Add additional information to a local image manifest"
+                "create:Create a local manifest list for annotating and pushing to a registry"
+                "inspect:Display an image manifest, or manifest list"
+                "push:Push a manifest list to a repository"
+                "rm:Delete one or more manifest lists from local storage"
+            )
+            _describe 'Commands' argumentOptions
+            _message -r '
+Usage:  docker manifest COMMAND
+
+The **docker manifest** command has subcommands for managing image manifests and
+manifest lists. A manifest list allows you to use one name to refer to the same image
+built for multiple architectures.
+
+To see help for a subcommand, use:
+
+    docker manifest CMD --help
+
+For full details on using docker manifest lists, see the registry v2 specification.
+
+EXPERIMENTAL:
+  docker manifest is an experimental feature.
+  Experimental features provide early access to product functionality. These
+  features may change between releases without warning, or can be removed from a
+  future release.
+
+  Learn more about experimental features in our documentation:
+  https://docs.docker.com/go/experimental/
+                        '
+
+        elif [[ $words[2] = "network" ]]; then
+            argumentOptions=(
+                "connect:Connect a container to a network"
+                "create:Create a network"
+                "disconnect:Disconnect a container from a network"
+                "inspect:Display detailed information on one or more networks"
+                "ls:List networks"
+                "prune:Remove all unused networks"
+                "rm:Remove one or more networks"
+            )
+            _describe 'Commands' argumentOptions
+            _message -r '
+Usage:  docker network COMMAND
+
+Manage networks
+                        '
+        elif [[ $words[2] = "plugin" ]]; then
+            argumentOptions=(
+                "create:Create a plugin from a rootfs and configuration. Plugin data directory must contain config.json and rootfs directory."
+                "disable:Disable a plugin"
+                "enable:Enable a plugin"
+                "inspect:Display detailed information on one or more plugins"
+                "install:Install a plugin"
+                "ls:List plugins"
+                "push:Push a plugin to a registry"
+                "rm:Remove one or more plugins"
+                "set:Change settings for a plugin"
+                "upgrade:Upgrade an existing plugin"
+            )
+            _describe 'Commands' argumentOptions
+            _message -r '
+Usage:  docker plugin COMMAND
+
+Manage plugins
+                        '
+
+        elif [[ $words[2] = "sbom" ]]; then
+            commandCompletions=(
+                "version:Show Docker sbom version information"
+            )
+
+            argumentOptions=(
+                "-D:show debug logging"
+                "--debug:show debug logging"
+                "--exclude:<stringArray>  exclude paths from being scanned using a glob expression"
+                "--format:<string>  report output format, options=[syft-json cyclonedx-xml cyclonedx-json:github-0-json spdx-tag-value spdx-json table text] (default 'table')"
+                "--layers:<string>  [experimental] selection of layers to catalog, options=[squashed all] (default 'squashed')"
+                "-o:<string>  file to write the default report output to (default is STDOUT)"
+                "--output:<string>  file to write the default report output to (default is STDOUT)"
+                "--platform:<string>  an optional platform specifier for container image sources (e.g. 'linux/arm64', 'linux/arm64/v8', 'arm64', 'linux')"
+                "--quiet:suppress all non-report output"
+                "-v:version for sbom"
+                "--version:version for sbom"
+            )
+            _alternative 'Options:Flags:(($argumentOptions))' 'Commands:Commands:(($commandCompletions))'
+            _message -r '
+Usage:  docker sbom [OPTIONS] COMMAND
+
+View the packaged-based Software Bill Of Materials (SBOM) for an image.
+
+EXPERIMENTAL: The flags and outputs of this command may change. Leave feedback on https://github.com/docker/sbom-cli-plugin.
+
+Examples:
+
+  docker sbom alpine:latest                                          a summary of discovered packages
+  docker sbom alpine:latest --format syft-json                       show all possible cataloging details
+  docker sbom alpine:latest --output sbom.txt                        write report output to a file
+  docker sbom alpine:latest --exclude /lib  --exclude '**/*.db'      ignore one or more paths/globs in the image
+                        '
+
+        elif [[ $words[2] = "scout" ]]; then
+                argumentOptions=(
+                    "attestation:Manage attestations on image indexes"
+                    "cache:Manage Docker Scout cache and temporary files"
+                    "compare:Compare two images and display differences (experimental)"
+                    "config:Manage Docker Scout configuration"
+                    "cves:Display CVEs identified in a software artifact"
+                    "enroll:Enroll an organization with Docker Scout"
+                    "environment:Manage environments (experimental)"
+                    "help:Display information about the available commands"
+                    "integration:Commands to list, configure, and delete Docker Scout integrations"
+                    "policy:Evaluate policies against an image and display the policy evaluation results (experimental)"
+                    "quickview:Quick overview of an image"
+                    "recommendations:Display available base image updates and remediation recommendations"
+                    "repo:Commands to list, enable, and disable Docker Scout on repositories"
+                    "version:Show Docker Scout version information"
+                )
+                _describe 'Commands' argumentOptions
+                _message -r '
+Command line tool for Docker Scout
+
+Usage
+  docker scout [command]
+
+Learn More
+  Read docker scout cli reference at https://docs.docker.com/engine/reference/commandline/scout/
+            '
+
+        elif [[ $words[2] = "system" ]]; then
+                argumentOptions=(
+                    "df:Show docker disk usage"
+                    "events:Get real time events from the server"
+                    "info:Display system-wide information"
+                    "prune:Remove unused data"
+                )
+
+                _describe 'Commands' argumentOptions
+                _message -r '
+Usage:  docker system COMMAND
+
+Manage Docker
+            '
+
+        elif [[ $words[2] = "trust" ]]; then
+                argumentOptions=(
+                    "inspect:Return low-level information about keys and signatures"
+                    "revoke:Remove trust for an image"
+                    "sign:Sign an image"
+                )
+
+                commandCompletions=(
+                    "key:Manage keys for signing Docker images"
+                    "signer:Manage entities who can sign Docker images"
+                )
+
+                _alternative 'Management Commands:Managment Commands:(($commandCompletions))' 'Commands:Commands:(($argumentOptions))' 
+                _message -r '
+Usage:  docker trust COMMAND
+
+Manage trust on Docker images
+            '
+
+        elif [[ $words[2] = "volume" ]]; then
+                argumentOptions=(
+                    "create:Create a volume"
+                    "inspect:Display detailed information on one or more volumes"
+                    "ls:List volumes"
+                    "prune:Remove unused local volumes"
+                    "rm:Remove one or more volumes"
+                    "update:Update a volume (cluster volumes only)"
+                )
+                _describe 'Commands' argumentOptions
+                _message -r '
+Usage:  docker volume COMMAND
+
+Manage volumes
+            '
+
+
+        elif [[ $words[2] = "attach" ]]; then
+            _describe "Options" attachCommandHelpOutput
+
+            _message -r "
+Usage:  docker container attach [OPTIONS] CONTAINER
+
+Attach local standard input, output, and error streams to a running container
+
+Aliases:
+docker container attach, docker attach
+            "
+        elif [[ $words[2] = "commit" ]]; then
+            _describe "Options" commitCommandHelpOutput
+
+            _message -r "
+Usage:  docker container commit [OPTIONS] CONTAINER [REPOSITORY[:TAG]]
+
+Create a new image from a container's changes
+
+Aliases:
+docker container commit, docker commit
+            "
+
+        elif [[ $words[2] = "cp" ]]; then
+            _describe "Options" cpCommandHelpOutput
+
+            _message -r "
+Usage:  docker container cp [OPTIONS] CONTAINER:SRC_PATH DEST_PATH|-
+docker cp [OPTIONS] SRC_PATH|- CONTAINER:DEST_PATH
+
+Copy files/folders between a container and the local filesystem
+
+Use '-' as the source to read a tar archive from stdin
+and extract it to a directory destination in a container.
+Use '-' as the destination to stream a tar archive of a
+container source to stdout.
+
+Aliases:
+docker container cp, docker cp
+            "
+
+        elif [[ $words[2] = "create" ]]; then
+            _describe "Options" createCommandHelpOutput
+
+            _message -r "
+            Usage:  docker container create [OPTIONS] IMAGE [COMMAND] [ARG...]
+
+Create a new container
+
+Aliases:
+docker container create, docker create
+            "
+
+        elif [[ $words[2] = "diff" ]]; then
+            _describe "Options" argumentOptions
+
+            _message -r "
+Usage:  docker container diff CONTAINER
+
+Inspect changes to files or directories on a container's filesystem
+
+Aliases:
+docker container diff, docker diff
+            "
+
+        elif [[ $words[2] = "events" ]]; then
+            _describe "Options" eventsCommandHelpOutput
+
+            _message -r "
+Usage:  docker events [OPTIONS]
+
+Get real time events from the server
+
+Aliases:
+  docker system events, docker events
+            "
+
+        elif [[ $words[2] = "export" ]]; then
+            _describe "Options" exportCommandHelpOutput
+
+            _message -r "
+Usage:  docker container export [OPTIONS] CONTAINER
+
+Export a container's filesystem as a tar archive
+
+Aliases:
+docker container export, docker export
+            "
+
+        elif [[ $words[2] = "history" ]]; then
+            _describe "Options" historyCommandHelpOutput
+
+            _message -r "
+Usage:  docker image history [OPTIONS] IMAGE
+
+Show the history of an image
+
+Aliases:
+docker image history, docker history
+            "
+
+        elif [[ $words[2] = "import" ]]; then
+            _describe "Options" importCommandHelpOutput
+
+            _message -r "
+Usage:  docker image import [OPTIONS] file|URL|- [REPOSITORY[:TAG]]
+
+Import the contents from a tarball to create a filesystem image
+
+Aliases:
+docker image import, docker import
+            "
+
+        elif [[ $words[2] = "inspect" ]]; then
+            argumentOptions=(
+                "-f:<string>  Format output using a custom template."
+                "--format:<string>  Format output using a custom template."
+                "-s:Display total file sizes if the type is container"
+                "--size:Display total file sizes if the type is container"
+                "--type:<string>  Return JSON for specified type"
+            )
+            _describe "Options" argumentOptions
+
+            _message -r "
+Usage:  docker inspect [OPTIONS] NAME|ID [NAME|ID...]
+
+Return low-level information on Docker objects
+            "
+        elif [[ $words[2] = "kill" ]]; then
+            _describe "Options" killCommandHelpOutput
+
+            _message -r "
+Usage:  docker container kill [OPTIONS] CONTAINER [CONTAINER...]
+
+Kill one or more running containers
+
+Aliases:
+docker container kill, docker kill
+            "
+
+        elif [[ $words[2] = "logs" ]]; then
+            _describe "Options" logsCommandHelpOutput
+
+            _message -r "
+Usage:  docker container logs [OPTIONS] CONTAINER
+
+Fetch the logs of a container
+
+Aliases:
+docker container logs, docker logs
+            "
+
+        elif [[ $words[2] = "load" ]]; then
+            _describe "Options" loadCommandHelpOutput
+
+            _message -r "
+Usage:  docker image load [OPTIONS]
+
+Load an image from a tar archive or STDIN
+
+Aliases:
+docker image load, docker load
+            "
+
+        elif [[ $words[2] = "pause" ]]; then
+            _message -r "
+Usage:  docker container pause CONTAINER [CONTAINER...]
+
+Pause all processes within one or more containers
+
+Aliases:
+docker container pause, docker pause
+            "
+
+        elif [[ $words[2] = "port" ]]; then
+            _message -r "
+Usage:  docker port CONTAINER [PRIVATE_PORT[/PROTO]]
+
+List port mappings or a specific mapping for the container
+
+Aliases:
+  docker container port, docker port
+            "
+
+        elif [[ $words[2] = "rename" ]]; then
+            _message -r "
+Usage:  docker container rename CONTAINER NEW_NAME
+
+Rename a container
+
+Aliases:
+docker container rename, docker rename
+            "
+
+        elif [[ $words[2] = "restart" ]]; then
+            _describe "Options" restartCommandHelpOutput
+
+            _message -r "
+Usage:  docker container restart [OPTIONS] CONTAINER [CONTAINER...]
+
+Restart one or more containers
+
+Aliases:
+docker container restart, docker restart
+            "
+
+        elif [[ $words[2] = "rm" ]]; then
+            _describe "Options" rmCommandHelpOutput
+
+            _message -r "
+Usage:  docker container rm [OPTIONS] CONTAINER [CONTAINER...]
+
+Remove one or more containers
+
+Aliases:
+docker container rm, docker container remove, docker rm
+            "
+        elif [[ $words[2] = "rmi" ]]; then
+            argumentOptions=(
+                "-f:Force removal of the image"
+                "--force:Force removal of the image"
+                "--no-prune:Do not delete untagged parents"
+            )
+
+            _message -r "
+Usage:  docker rmi [OPTIONS] IMAGE [IMAGE...]
+
+Remove one or more images
+
+Aliases:
+  docker image rm, docker image remove, docker rmi
+            "
+
+        elif [[ $words[2] = "save" ]]; then
+            _describe "Options" saveCommandHelpOutput
+
+            _message -r "
+Usage:  docker image save [OPTIONS] IMAGE [IMAGE...]
+
+Save one or more images to a tar archive (streamed to STDOUT by default)
+
+Aliases:
+docker image save, docker save
+            "
+
+        elif [[ $words[2] = "start" ]]; then
+            _describe "Options" startCommandHelpOutput
+
+            _message -r "
+Usage:  docker container start [OPTIONS] CONTAINER [CONTAINER...]
+
+Start one or more stopped containers
+
+Aliases:
+docker container start, docker start
+            "
+
+        elif [[ $words[2] = "stats" ]]; then
+            _describe "Options" statsCommandHelpOutput
+
+            _message -r "
+Usage:  docker container stats [OPTIONS] [CONTAINER...]
+
+Display a live stream of container(s) resource usage statistics
+
+Aliases:
+docker container stats, docker stats
+            "
+
+        elif [[ $words[2] = "stop" ]]; then
+            _describe "Options" stopCommandHelpOutput
+
+            _message -r "
+Usage:  docker container stop [OPTIONS] CONTAINER [CONTAINER...]
+
+Stop one or more running containers
+
+Aliases:
+docker container stop, docker stop
+            "
+
+        elif [[ $words[2] = "tag" ]]; then
+            _message -r "
+Usage:  docker image tag SOURCE_IMAGE[:TAG] TARGET_IMAGE[:TAG]
+
+Create a tag TARGET_IMAGE that refers to SOURCE_IMAGE
+
+Aliases:
+docker image tag, docker tag
+            "
+
+        elif [[ $words[2] = "top" ]]; then
+
+            _message -r "
+Usage:  docker container top CONTAINER [ps OPTIONS]
+
+Display the running processes of a container
+
+Aliases:
+docker container top, docker top
+            "
+
+        elif [[ $words[2] = "unpause" ]]; then
+            _message -r "
+Usage:  docker container unpause CONTAINER [CONTAINER...]
+
+Unpause all processes within one or more containers
+
+Aliases:
+docker container unpause, docker unpause
+            "
+
+        elif [[ $words[2] = "update" ]]; then
+            _describe "Options" updateCommandHelpOutput
+
+            _message -r "
+Usage:  docker container update [OPTIONS] CONTAINER [CONTAINER...]
+
+Update configuration of one or more containers
+
+Aliases:
+docker container update, docker update
+            "
+
+        elif [[ $words[2] = "wait" ]]; then
+            _message -r "
+Usage:  docker container wait CONTAINER [CONTAINER...]
+
+Block until one or more containers stop, then print their exit codes
+
+Aliases:
+docker container wait, docker wait
+            "
+
+
+        fi
+
+	fi
+
+
+    
+
+
+####### Fourth argument position
+
+    if [[ $CURRENT -eq 4 ]]; then
+        if [[ $words[2] = "images" && $words[3] = "--format" ]]; then
+            _message -r '
+Usage: docker images --format <string>'
+
+            _message -r '
+Format output using a custom template:
+
+"table":            Print output in table format with column
+headers (default)
+"table TEMPLATE":   Print output in table format using the
+given Go template
+"json":             Print in JSON format
+"TEMPLATE":         Print output using the given Go template.
+
+Refer to https://docs.docker.com/go/formatting/ for more
+information about formatting output with templates
+                        '
+
+        elif [[ $words[2] = "info" && $words[3] = "--format" || $words[2] = "info" && $words[3] = "-f" ]]; then
+            _message -r '
+Usage: docker images --format <string>'
+
+            _message -r '
+Format output using a custom template:
+
+"json":             Print in JSON format
+"TEMPLATE":         Print output using the given Go template.
+
+Refer to https://docs.docker.com/go/formatting/ for more
+information about formatting output with templates
+                        '
+
+
+        elif [[ $words[2] = "ps" && $words[3] = "--format" ]]; then
+            _message -r '
+Usage: docker ps --format <string>'
+
+            _message -r '
+Format output using a custom template:
+    "table":            Print output in table format with column
+    headers (default)
+    "table TEMPLATE":   Print output in table format using the
+    given Go template
+    "json":             Print in JSON format
+    "TEMPLATE":         Print output using the given Go template.
+
+    Refer to https://docs.docker.com/go/formatting/ for more
+                        '
+
+        elif [[ $words[2] = "run" && $words[3] = "--cgroupns" ]]; then
+            _message -r '
+Usage: docker run --cgroupns <string>'
+
+            _message -r "
+Cgroup namespace to use (host|private)
+'host':    Run the container in the Docker
+host's cgroup namespace
+'private': Run the container in its own
+private cgroup namespace
+'':        Use the cgroup namespace as
+configured by the
+        default-cgroupns-mode option on the
+daemon (default)
+            "
+
+     ##### Management Commands
+        elif [[ $words[2] = "builder" || $words[2] = "buildx" ]]; then
+            if [[ $words[3] = "bake" ]]; then
+                argumentOptions=(
+                   "--builder:<string>  Override the configured builder instance (default 'desktop-linux')"
+                   "-f:<stringArray>  Build definition file"
+                   "--file:<stringArray>  Build definition file"
+                   "--load:Shorthand for '--set=*.output=type=docker'"
+                   "--metadata-file:<string>  Write build result metadata to the file"
+                   "--no-cache:Do not use cache when building the image"
+                   "--print:Print the options without building"
+                   "--progress:<string>  Set type of progress output ('auto', 'plain', 'tty'). Use plain to show container output (default "auto")"
+                   "--provenance:<string>  Shorthand for '--set=*.attest=type=provenance'"
+                   "--pull:Always attempt to pull all referenced images"
+                   "--push:Shorthand for '--set=*.output=type=registry'"
+                   "--sbom:<string>  Shorthand for '--set=*.attest=type=sbom'"
+                   "--set:<stringArray>  Override target value (e.g., 'targetpattern.key=value')"
+                )
+                _message -r "
+Usage:  docker buildx bake [OPTIONS] [TARGET...]
+
+Build from a file
+
+Aliases:
+  docker buildx bake, docker buildx f        
+                            "
+                _describe "Options" argumentOptions
+
+
+            elif [[ $words[3] = "build" ]]; then
+                _message -r "
+    Usage:  docker buildx bake [OPTIONS] [TARGET...]
+
+    Build from a file
+
+    Aliases:
+    docker buildx bake, docker buildx f        
+                    "
+                _describe "Options" helpPageTemplate1
+
+
+            elif [[ $words[3] = "imagetools" ]]; then
+
+                argumentOptions=(
+                    "--builder:<string>  Override the configured builder instance (default 'desktop-linux')"
+                )
+
+                commandCompletions=(
+                    "create:Create a new image based on source images"
+                    "inspect:Show details of an image in the registry"
+                )
+                _alternative 'Commands:Commands:(($commandCompletions))' 'Options:Options:(($argumentOptions))' 
+
+                _message -r "
+Usage:  docker buildx imagetools [OPTIONS] COMMAND
+
+Commands to work on images in registry
+                "
+
+
+            elif [[ $words[3] = "create" ]]; then
+
+                argumentOptions=(
+                    "--append:Append a node to builder instead of changing it"
+                    "--bootstrap:Boot builder after creation"
+                    "--buildkitd-flags:<string>  Flags for buildkitd daemon"
+                    "--config:<string>  BuildKit config file"
+                    "--driver:<string>  Driver to use (available: 'cloud', 'docker-container', 'kubernetes', 'remote')"
+                    "--driver-opt:<stringArray>  Options for the driver"
+                    "--leave:Remove a node from builder instead of changing it"
+                    "--name:<string>  Builder instance name"
+                    "--node:<string>  Create/modify node with given name"
+                    "--platform:<stringArray>  Fixed platforms for current node"
+                    "--use:Set the current builder instance"
+                )
+
+                _message -r "
+Usage:  docker buildx create [OPTIONS] [CONTEXT|ENDPOINT]
+
+Create a new builder instance
+                "
+                
+                _describe "Options" argumentOptions
+
+
+            elif [[ $words[3] = "du" ]]; then
+
+                argumentOptions=(
+                    "--builder:<string>  Override the configured builder instance (default 'desktop-linux')"
+                    "--filter:<filter>  Provide filter values"
+                    "--verbose:Provide a more verbose output"  
+                )
+
+                _message -r "
+Usage:  docker buildx du
+
+Disk usage
+            "
+                    
+            _describe "Options" argumentOptions
+
+
+            elif [[ $words[3] = "inspect" ]]; then
+
+                argumentOptions=(
+                    "--bootstrap:Ensure builder has booted before inspecting"
+                    "--builder:<string>  Override the configured builder instance"
+                )
+
+                _message -r "
+Usage:  docker buildx inspect [NAME]
+
+Inspect current builder instance
+            "
+            
+            _describe "Options" argumentOptions
+
+
+            elif [[ $words[3] = "ls" ]]; then
+
+                _message -r "
+Usage:  docker buildx ls
+
+List builder instances
+                "
+
+            elif [[ $words[3] = "prune" ]]; then
+
+                argumentOptions=(
+                   "-a:Include internal/frontend images"
+                   "--all:Include internal/frontend images"
+                   "--builder:<string>  Override the configured builder instance"
+                   "--filter:<filter>  Provide filter values (e.g., "until=24h")"
+                   "-f:Do not prompt for confirmation"
+                   "--force:Do not prompt for confirmation"
+                   "--keep-storage:<bytes>  Amount of disk space to keep for cache"
+                   "--verbose:Provide a more verbose output"
+                )
+
+                _message -r "
+Usage:  docker buildx prune
+
+Remove build cache
+                "
+                
+                _describe "Options" argumentOptions
+
+
+            elif [[ $words[3] = "rm" ]]; then
+
+                argumentOptions=(
+                    "--all-inactive:Remove all inactive builders"
+                    "--builder:<string>  Override the configured builder instance"
+                    "-f:Do not prompt for confirmation"
+                    "--force:Do not prompt for confirmation"
+                    "--keep-daemon:Keep the buildkitd daemon running"
+                    '--keep-state:Keep BuildKit state'
+                )
+
+                _message -r "
+Usage:  docker buildx rm [NAME]
+
+Remove a builder instance
+            "
+                    
+            _describe "Options" argumentOptions
+
+
+            elif [[ $words[3] = "stop" ]]; then
+
+                argumentOptions=(
+                    "--builder:<string>  Override the configured builder instance"
+                )
+
+                _message -r "
+Usage:  docker buildx stop [NAME]
+
+Stop builder instance
+                "
+                
+                _describe "Options" argumentOptions
+
+
+            elif [[ $words[3] = "use" ]]; then
+
+                argumentOptions=(
+                    "--builder:<string>   Override the configured builder instance"
+                    "--default:Set builder as default for current context"
+                    "--global:Builder persists context changes"
+                )
+
+                _message -r "
+Usage:  docker buildx use [OPTIONS] NAME
+
+Set the current builder instance
+            "
+            _describe "Options" argumentOptions
+
+
+            elif [[ $words[3] = "version" ]]; then
+
+                _message -r "
+Usage:  docker buildx version
+
+Show buildx version information
+                "
+                _describe "Options" argumentOptions
+            fi
+
+        elif [[ $words[2] = "checkpoint" ]]; then
+
+            if [[ $words[3] = "create" ]]; then
+                argumentOptions=(
+                    "--checkpoint-dir:<string>  Use a custom checkpoint storage directory"
+                    "--leave-running:Leave the container running after checkpoint"
+                )
+                _message -r "
+Usage:  docker checkpoint create [OPTIONS] CONTAINER CHECKPOINT
+
+Create a checkpoint from a running container
+            "
+            _describe "Options" argumentOptions
+
+
+            elif [[ $words[3] = "ls" ]]; then
+                argumentOptions=(
+                    "--checkpoint-dir:<string>  Use a custom checkpoint storage directory"
+                )
+                _message -r "
+Usage:  docker checkpoint ls [OPTIONS] CONTAINER
+
+List checkpoints for a container
+
+Aliases:
+  docker checkpoint ls, docker checkpoint list
+                "
+                _describe "Options" argumentOptions
+
+            elif [[ $words[3] = "rm" ]]; then
+                argumentOptions=(
+                    "--checkpoint-dir:<string>  Use a custom checkpoint storage directory"
+                )
+                _describe "Options" argumentOptions
+
+                _message -r "
+Usage:  docker checkpoint rm [OPTIONS] CONTAINER CHECKPOINT
+
+Remove a checkpoint
+
+Aliases:
+  docker checkpoint rm, docker checkpoint remove
+                "
+
+            fi
+        
+        elif [[ $words[2] = "compose" ]]; then
+            if [[ $words[3] = "attach" ]]; then
+                argumentOptions=(
+                    "--detach-keys:<string>  Override the key sequence for detaching from a container."
+                    "--dry-run:Execute command in dry run mode"
+                    "--index:<int>  index of the container if service has multiple replicas."
+                    "--no-stdin:Do not attach STDIN"
+                    "--sig-proxy:Proxy all received signals to the process (default true)"
+                )
+                _describe "Options" argumentOptions
+
+                _message -r "
+Usage:  docker compose attach [OPTIONS] SERVICE
+
+Attach local standard input, output, and error streams to a service's running container
+                "
+
+            elif [[ $words[3] = "build" ]]; then
+                argumentOptions=(
+                    "--build-arg:<stringArray>  Set build-time variables for services"
+                    "--builder:<string>  Set builder to use"
+                    "--dry-run:Execute command in dry run mode"
+                    "-m:<bytes>  Set memory limit for the build container. Not supported by BuildKit."
+                    "--memory:<bytes>  Set memory limit for the build container. Not supported by BuildKit."
+                    "--no-cache:Do not use cache when building the image"
+                    "--pull:Always attempt to pull a newer version of the image"
+                    "--push:Push service images"
+                    "-q:Don't print anything to STDOUT"
+                    "--quiet:Don't print anything to STDOUT"
+                    "--ssh:<string>  Set SSH authentications used when building service images. (use 'default' for using your default SSH Agent)"
+                    "--with-dependencies:Also build dependencies (transitively)"
+                )
+
+                _describe "Options" argumentOptions
+
+                _message -r "
+Usage:  docker compose build [OPTIONS] [SERVICE...]
+
+Build or rebuild services
+                "
+
+            elif [[ $words[3] = "config" ]]; then
+                argumentOptions=(
+                    "--dry-run:Execute command in dry run mode"
+                    "--format:<string>  Format the output. Values: [yaml | json] (default "yaml")"
+                    "--hash string:Print the service config hash, one per line"
+                    "--images:Print the image names, one per line"
+                    "--no-consistency:Don't check model consistency - warning: may produce invalid Compose output"
+                    "--no-interpolate:Don't interpolate environment variables"
+                    "--no-normalize:Don't normalize compose model"
+                    "--no-path-resolution:Don't resolve file paths"
+                    "-o:<string>  Save to file (default to stdout)"
+                    "--output:<string>  Save to file (default to stdout)"
+                    "--profiles:Print the profile names, one per line"
+                    "-q:Only validate the configuration, don't print anything"
+                    "--quiet:Only validate the configuration, don't print anything"
+                    "--resolve-image-digests:Pin image tags to digests"
+                    "--services:Print the service names, one per line"
+                    "--volumes:Print the volume names, one per line"
+                )
+                _describe "Options" argumentOptions
+
+                _message -r "
+Usage:  docker compose config [OPTIONS] [SERVICE...]
+
+Parse, resolve and render compose file in canonical format
+
+Aliases:
+  docker compose config, docker compose convert
+                "
+
+
+            elif [[ $words[3] = "cp" ]]; then
+                argumentOptions=(
+                    "-a:Archive mode (copy all uid/gid information)"
+                    "--archive:Archive mode (copy all uid/gid information)"
+                    "--dry-run:Execute command in dry run mode"
+                    "-L:Always follow symbol link in SRC_PATH"
+                    "--follow-link:Always follow symbol link in SRC_PATH"
+                    "--index:<int>  Index of the container if service has multiple replicas"
+                )
+                _describe "Options" argumentOptions
+
+                _message -r "
+Usage:  docker compose cp [OPTIONS] SERVICE:SRC_PATH DEST_PATH|-
+	docker compose cp [OPTIONS] SRC_PATH|- SERVICE:DEST_PATH
+
+Copy files/folders between a service container and the local filesystem
+                "
+
+            elif [[ $words[3] = "create" ]]; then
+                argumentOptions=(
+                    "--build:Build images before starting containers"
+                    "--dry-run:Execute command in dry run mode"
+                    "--force-recreate:Recreate containers even if their configuration and image haven't changed"
+                    "--no-build:Don't build an image, even if it's policy"
+                    "--no-recreate:If containers already exist, don't recreate them. Incompatible with --force-recreate."
+                    "--pull string:Pull image before running ('always'|'missing'|'never'|'build') (default "policy")"
+                    "--remove-orphans:Remove containers for services not defined in the Compose file"
+                    "--scale scale:Scale SERVICE to NUM instances. Overrides the scale setting in the Compose file if present."
+                )
+                _describe "Options" argumentOptions
+
+                _message -r "
+Usage:  docker compose create [OPTIONS] [SERVICE...]
+
+Creates containers for a service
+                "
+
+            elif [[ $words[3] = "down" ]]; then
+                argumentOptions=(
+                "--dry-run:Execute command in dry run mode"
+                "--remove-orphans:Remove containers for services not defined in the Compose file"
+                "--rmi:<string>  Remove images used by services. 'local' remove only images that don't have a custom tag ('local'|'all')"
+                "-t:<int>  Specify a shutdown timeout in seconds"
+                "--timeout:<int>  Specify a shutdown timeout in seconds"
+                "-v:Remove named volumes declared in the 'volumes' section of the Compose file and anonymous volumes attached to containers"
+                "--volumes:Remove named volumes declared in the 'volumes' section of the Compose file and anonymous volumes attached to containers"
+                )
+                _describe "Options" argumentOptions
+
+                _message -r "
+Usage:  docker compose down [OPTIONS] [SERVICES]
+
+Stop and remove containers, networks
+                "
+
+            elif [[ $words[3] = "events" ]]; then
+                argumentOptions=(
+                    "--dry-run:Execute command in dry run mode"
+                    "--json:Output events as a stream of json objects"
+
+                )
+                _describe "Options" argumentOptions
+
+                _message -r "
+Usage:  docker compose events [OPTIONS] [SERVICE...]
+
+Receive real time events from containers
+                "
+
+            elif [[ $words[3] = "exec" ]]; then
+                argumentOptions=(
+                    "-d:Detached mode: Run command in the background"
+                    "--detach:Detached mode: Run command in the background"
+                    "--dry-run:Execute command in dry run mode"
+                    "-e:<stringArray>  Set environment variables"
+                    "--env:<stringArray>  Set environment variables"
+                    "--index:<int>  Index of the container if service has multiple replicas"
+                    "-T:<docker> <compose> <exec>:Disable pseudo-TTY allocation. By default dockercompose exec allocates a TTY."
+                    "--no-TTY:<docker> <compose> <exec>:Disable pseudo-TTY allocation. By default dockercompose exec allocates a TTY."
+                    "--privileged:Give extended privileges to the process"
+                    "-u:<string>  Run the command as this user"
+                    "--user:<string>  Run the command as this user"
+                    "-w:<string>  Path to workdir directory for this command"
+                    "--workdir:<string>  Path to workdir directory for this command"
+                )
+                _describe "Options" argumentOptions
+
+                _message -r "
+Usage:  docker compose exec [OPTIONS] SERVICE COMMAND [ARGS...]
+
+Execute a command in a running container
+                "
+
+            elif [[ $words[3] = "images" ]]; then
+                argumentOptions=(
+                    "--dry-run:Execute command in dry run mode"
+                    "--format:<string>  Format the output. Values: [table | json] (default "table")"
+                    "-q:Only display IDs"
+                    "--quiet:Only display IDs"
+
+                )
+                _describe "Options" argumentOptions
+
+                _message -r "
+Usage:  docker compose images [OPTIONS] [SERVICE...]
+
+List images used by the created containers
+                "
+
+            elif [[ $words[3] = "kill" ]]; then
+                argumentOptions=(
+                    "--dry-run:Execute command in dry run mode"
+                    "--remove-orphans:Remove containers for services not defined in the Compose file"
+                    "-s:<string>  SIGNAL to send to the container (default 'SIGKILL')"
+                    "--signal:<string>  SIGNAL to send to the container (default 'SIGKILL')"
+
+                )
+                _describe "Options" argumentOptions
+
+                _message -r "
+Usage:  docker compose kill [OPTIONS] [SERVICE...]
+
+Force stop service containers
+                "
+
+            elif [[ $words[3] = "logs" ]]; then
+                argumentOptions=(
+                    "--dry-run:Execute command in dry run mode"
+                    "-f:Follow log output"
+                    "--follow:Follow log output"
+                    "--index:<int>  index of the container if service has multiple replicas"
+                    "--no-color:Produce monochrome output"
+                    "--no-log-prefix:Don't print prefix in logs"
+                    "--since:<string>  Show logs since timestamp (e.g. 2013-01-02T13:23:37Z) or relative (e.g. 42m for 42 minutes)"
+                    "-n:<string>  Number of lines to show from the end of the logs for each container (default "all")"
+                    "--tail:<string>  Number of lines to show from the end of the logs for each container (default "all")"
+                    "-t:Show timestamps"
+                    "--timestamps:Show timestamps"
+                    "--until:<string>  Show logs before a timestamp (e.g. 2013-01-02T13:23:37Z) or relative (e.g. 42m for 42 minutes)"
+                )
+                _describe "Options" argumentOptions
+
+                _message -r "
+Usage:  docker compose attach [OPTIONS] SERVICE
+
+Attach local standard input, output, and error streams to a service's running container
+                "
+
+            elif [[ $words[3] = "ls" ]]; then
+                argumentOptions=(
+                    "-a:Show all stopped Compose projects"
+                    "--all:Show all stopped Compose projects"
+                    "--dry-run:Execute command in dry run mode"
+                    "--filter:<filter>  Filter output based on conditions provided"
+                    "--format:<string>  Format the output. Values: [table | json] (default 'table')"
+                    "-q:Only display IDs"
+                    "--quiet:Only display IDs"
+                )
+                _describe "Options" argumentOptions
+
+                _message -r "
+Usage:  docker compose ls [OPTIONS]
+
+List running compose projects
+                "
+
+            elif [[ $words[3] = "pause" ]]; then
+                argumentOptions=(
+                    "--dry-run:Execute command in dry run mode"
+                )
+                _describe "Options" argumentOptions
+
+                _message -r "
+Usage:  docker compose pause [SERVICE...]
+
+Pause services
+                "
+
+            elif [[ $words[3] = "port" ]]; then
+                argumentOptions=(
+                    "--dry-run:Execute command in dry run mode"
+                    "--index:<int>  Index of the container if service has multiple replicas"
+                    "--protocol:<string>  tcp or udp (default "tcp")"
+                )
+                _describe "Options" argumentOptions
+
+                _message -r "
+Usage:  docker compose port [OPTIONS] SERVICE PRIVATE_PORT
+
+Print the public port for a port binding
+                "
+
+            elif [[ $words[3] = "ps" ]]; then
+                argumentOptions=(
+                    "-a, --all:Show all stopped containers (including those created by the run command)"
+                    "--dry-run:Execute command in dry run mode"
+                    "--filter:<string>  Filter services by a property (supported filters: status)"
+                    "--format:<string>  Format output using a custom template."
+                    "--no-trunc:Don't truncate output"
+                    "--orphans:Include orphaned services (not declared by project) (default true)"
+                    "-q:Only display IDs"
+                    "--quiet:Only display IDs"
+                    "--services:Display services"
+                    "--status:<stringArray>  Filter services by status. Values: [paused | restarting | removing | running | dead | created | exited]"
+                )
+                _describe "Options" argumentOptions
+
+                _message -r "
+Usage:  docker compose ps [OPTIONS] [SERVICE...]
+
+List containers
+
+                "
+
+            elif [[ $words[3] = "pull" ]]; then
+                argumentOptions=(
+                    "--dry-run:Execute command in dry run mode"
+                    "--ignore-buildable:Ignore images that can be built"
+                    "--ignore-pull-failures:Pull what it can and ignores images with pull failures"
+                    "--include-deps:Also pull services declared as dependencies"
+                    "--policy string:Apply pull policy ('missing'|'always')"
+                    "-q:Pull without printing progress information"
+                    "--quiet:Pull without printing progress information"
+                )
+                _describe "Options" argumentOptions
+
+                _message -r "
+Usage:  docker compose pull [OPTIONS] [SERVICE...]
+
+Pull service images
+                "
+
+            elif [[ $words[3] = "push" ]]; then
+                argumentOptions=(
+                    "--dry-run:Execute command in dry run mode"
+                    "--ignore-push-failures:Push what it can and ignores images with push failures"
+                    "--include-deps:Also push images of services declared as dependencies"
+                    "-q:Push without printing progress information"
+                    "--quiet:Push without printing progress information"
+                )
+                _describe "Options" argumentOptions
+
+                _message -r "
+Usage:  docker compose push [OPTIONS] [SERVICE...]
+
+Push service images
+                "
+
+            elif [[ $words[3] = "restart" ]]; then
+                argumentOptions=(
+                    "--dry-run:Execute command in dry run mode"
+                    "--no-deps:Don't restart dependent services"
+                    "-t:<int>  Specify a shutdown timeout in seconds"
+                    "--timeout:<int>  Specify a shutdown timeout in seconds"
+                )
+                _describe "Options" argumentOptions
+
+                _message -r "
+Usage:  docker compose restart [OPTIONS] [SERVICE...]
+
+Restart service containers
+                "
+
+            elif [[ $words[3] = "rm" ]]; then
+                argumentOptions=(
+                    "--dry-run:Execute command in dry run mode"
+                    "-f, --force:Don't ask to confirm removal"
+                    "-s, --stop:Stop the containers, if required, before removing"
+                    "-v, --volumes:Remove any anonymous volumes attached to containers"
+                )
+                _describe "Options" argumentOptions
+
+                _message -r "
+Usage:  docker compose rm [OPTIONS] [SERVICE...]
+
+Removes stopped service containers
+
+By default, anonymous volumes attached to containers will not be removed. You
+can override this with -v. To list all volumes, use 'docker volume ls'.
+
+Any data which is not in a volume will be lost.
+                "
+
+            elif [[ $words[3] = "run" ]]; then
+                argumentOptions=(
+                "--build:Build image before starting container"
+                "--cap-add:<list>  Add Linux capabilities"
+                "--cap-drop:<list>  Drop Linux capabilities"
+                "-d:Run container in background and print container ID"
+                "--detach:Run container in background and print container ID"
+                "--dry-run:Execute command in dry run mode"
+                "--entrypoint:<string>  Override the entrypoint of the image"
+                "-e:<stringArray>  Set environment variables"
+                "--env:<stringArray>  Set environment variables"
+                "-i:Keep STDIN open even if not attached (default true)"
+                "--interactive:Keep STDIN open even if not attached (default true)"
+                "-l:<stringArray>  Add or override a label"
+                "--label:<stringArray>  Add or override a label"
+                "--name:<string>  Assign a name to the container"
+                "-T:Disable pseudo-TTY allocation (default: auto-detected)"
+                "--no-TTY:Disable pseudo-TTY allocation (default: auto-detected)"
+                "--no-deps:Don't start linked services"
+                "-p:<stringArray>  Publish a container's port(s) to the host"
+                "--publish:<stringArray>  Publish a container's port(s) to the host"
+                "--quiet-pull:Pull without printing progress information"
+                "--remove-orphans:Remove containers for services not defined in the Compose file"
+                "--rm:Automatically remove the container when it exits"
+                "-P:Run command with all service's ports enabled and mapped to the host"
+                "--service-ports:Run command with all service's ports enabled and mapped to the host"
+                "--use-aliases:Use the service's network useAliases in the network(s) the container connects to"
+                "-u:<string>  Run as specified username or uid"
+                "--user:<string>  Run as specified username or uid"
+                "-v:<stringArray>  Bind mount a volume"
+                "--volume:<stringArray>  Bind mount a volume"
+                "-w:<string>  Working directory inside the container"
+                "--workdir:<string>  Working directory inside the container"
+                )
+                _describe "Options" argumentOptions
+
+                _message -r "
+Usage:  docker compose run [OPTIONS] SERVICE [COMMAND] [ARGS...]
+
+Run a one-off command on a service
+                "
+
+            elif [[ $words[3] = "scale" ]]; then
+                argumentOptions=(
+                    "--dry-run:Execute command in dry run mode"
+                    "--no-deps:Don't start linked services"
+                )
+                _describe "Options" argumentOptions
+
+                _message -r "
+Usage:  docker compose scale [SERVICE=REPLICAS...]
+
+Scale services
+                "
+
+            elif [[ $words[3] = "start" ]]; then
+                argumentOptions=(
+                    "--dry-run:Execute command in dry run mode"
+                )
+                _describe "Options" argumentOptions
+
+                _message -r "
+Usage:  docker compose start [SERVICE...]
+
+Start services
+                "
+
+            elif [[ $words[3] = "stats" ]]; then
+                argumentOptions=(
+                    "-a:Show all containers (default shows just running)"
+                    "--all:Show all containers (default shows just running)"
+                    "--dry-run:Execute command in dry run mode"
+                    "--format:<string>  Format output using a custom template."
+                    "--no-stream:Disable streaming stats and only pull the first result"
+                    "--no-trunc:Do not truncate output"
+                )
+                _describe "Options" argumentOptions
+
+                _message -r "
+Usage:  docker compose stats [OPTIONS] [SERVICE]
+
+Display a live stream of container(s) resource usage statistics
+
+                "
+
+            elif [[ $words[3] = "stop" ]]; then
+                argumentOptions=(
+                    "--dry-run:Execute command in dry run mode"
+                    "-t:<int>  Specify a shutdown timeout in seconds"
+                    "--timeout:<int>  Specify a shutdown timeout in seconds"
+                )
+                _describe "Options" argumentOptions
+
+                _message -r "
+Usage:  docker compose stop [OPTIONS] [SERVICE...]
+
+Stop services
+                "
+
+            elif [[ $words[3] = "top" ]]; then
+                argumentOptions=(
+                    "--dry-run:Execute command in dry run mode"
+                )
+                _describe "Options" argumentOptions
+
+                _message -r "
+Usage:  docker compose top [SERVICES...]
+
+Display the running processes
+                "
+
+            elif [[ $words[3] = "unpause" ]]; then
+                argumentOptions=(
+                    "--dry-run:Execute command in dry run mode"
+
+                )
+                _describe "Options" argumentOptions
+
+                _message -r "
+Usage:  docker compose unpause [SERVICE...]
+
+Unpause services
+                "
+
+            elif [[ $words[3] = "up" ]]; then
+                argumentOptions=(
+                    "--abort-on-container-exit:Stops all containers if any container was stopped. Incompatible with -d"
+                    "--always-recreate-deps:Recreate dependent containers. Incompatible with --no-recreate."
+                    '--attach stringArray:Restrict attaching to the specified services. Incompatible with --attach-dependencies.'
+                    "--attach-dependencies:Automatically attach to log output of dependent services"
+                    "--build:Build images before starting containers"
+                    "-d:Detached mode: Run containers in the background"
+                    "--detach:Detached mode: Run containers in the background"
+                    "--dry-run:Execute command in dry run mode"
+                    "--exit-code-from:<string>  Return the exit code of the selected service container. Implies --abort-on-container-exit"
+                    "--force-recreate:Recreate containers even if their configuration and image haven't changed"
+                    "--no-attach:<stringArray>  Do not attach (stream logs) to the specified services"
+                    "--no-build:Don't build an image, even if it's policy"
+                    "--no-color:Produce monochrome output"
+                    "--no-deps:Don't start linked services"
+                    "--no-log-prefix:Don't print prefix in logs"
+                    "--no-recreate:If containers already exist, don't recreate them. Incompatible with --force-recreate."
+                    "--no-start:Don't start the services after creating them"
+                    "--pull:<string>  Pull image before running ('always'|'missing'|'never') (default 'policy')"
+                    "--quiet-pull:Pull without printing progress information"
+                    "--remove-orphans:Remove containers for services not defined in the Compose file"
+                    "-V:Recreate anonymous volumes instead of retrieving data from the previous containers"
+                    "--renew-anon-volumes:Recreate anonymous volumes instead of retrieving data from the previous containers"
+                    "--scale:<scale>  Scale SERVICE to NUM instances. Overrides the scale setting in the Compose file if present."
+                    "-t:<int>  Use this timeout in seconds for container shutdown when attached or when containers are already running"
+                    "--timeout:<int>  Use this timeout in seconds for container shutdown when attached or when containers are already running"
+                    "--timestamps:Show timestamps"
+                    "--wait:Wait for services to be running|healthy. Implies detached mode."
+                    "--wait-timeout:<int>  Maximum duration to wait for the project to be running|healthy"
+
+                )
+                _describe "Options" argumentOptions
+
+                _message -r "
+Usage:  docker compose up [OPTIONS] [SERVICE...]
+
+Create and start containers
+                "
+
+
+            elif [[ $words[3] = "version" ]]; then
+                argumentOptions=(
+                    "--dry-run:Execute command in dry run mode"
+                    "-f:<string>  Format the output. Values: [pretty | json]. (Default: pretty)"
+                    "--format:<string>  Format the output. Values: [pretty | json]. (Default: pretty)"
+                    "--short:Shows only Compose's version number"
+                )
+                _describe "Options" argumentOptions
+
+                _message -r "
+Usage:  docker compose version [OPTIONS]
+
+Show the Docker Compose version information
+                "
+
+
+            elif [[ $words[3] = "wait" ]]; then
+                argumentOptions=(
+                    "--down-project:Drops project when the first container stops"
+                    "--dry-run:Execute command in dry run mode"
+                )
+                _describe "Options" argumentOptions
+
+                _message -r "
+Usage:  docker compose wait SERVICE [SERVICE...] [OPTIONS]
+
+Block until the first service container stops
+                "
+
+            elif [[ $words[3] = "watch" ]]; then
+                argumentOptions=(
+                   "--dry-run:Execute command in dry run mode"
+                   "--no-up:Do not build & start services before watching"
+                   "--quiet:hide build output"
+
+                )
+                _describe "Options" argumentOptions
+
+                _message -r "
+Usage:  docker compose watch [SERVICE...]
+
+Watch build context for service and rebuild/refresh containers when files are updated
+                "
+
+
+            fi
+            
+        elif [[ $words[2] = "container" ]]; then
+            if [[ $words[3] = "attach" ]]; then
+                _describe "Options" attachCommandHelpOutput
+
+                _message -r "
+Usage:  docker container attach [OPTIONS] CONTAINER
+
+Attach local standard input, output, and error streams to a running container
+
+Aliases:
+  docker container attach, docker attach
+                "
+            elif [[ $words[3] = "commit" ]]; then
+                _describe "Options" commitCommandHelpOutput
+
+                _message -r "
+Usage:  docker container commit [OPTIONS] CONTAINER [REPOSITORY[:TAG]]
+
+Create a new image from a container's changes
+
+Aliases:
+  docker container commit, docker commit
+                "
+
+            elif [[ $words[3] = "cp" ]]; then
+                _describe "Options" cpCommandHelpOutput
+
+                _message -r "
+Usage:  docker container cp [OPTIONS] CONTAINER:SRC_PATH DEST_PATH|-
+	docker cp [OPTIONS] SRC_PATH|- CONTAINER:DEST_PATH
+
+Copy files/folders between a container and the local filesystem
+
+Use '-' as the source to read a tar archive from stdin
+and extract it to a directory destination in a container.
+Use '-' as the destination to stream a tar archive of a
+container source to stdout.
+
+Aliases:
+  docker container cp, docker cp
+                "
+
+            elif [[ $words[3] = "create" ]]; then
+                _describe "Options" createCommandHelpOutput
+
+                _message -r "
+                Usage:  docker container create [OPTIONS] IMAGE [COMMAND] [ARG...]
+
+Create a new container
+
+Aliases:
+  docker container create, docker create
+                "
+
+            elif [[ $words[3] = "diff" ]]; then
+                _describe "Options" argumentOptions
+
+                _message -r "
+Usage:  docker container diff CONTAINER
+
+Inspect changes to files or directories on a container's filesystem
+
+Aliases:
+  docker container diff, docker diff
+                "
+
+            elif [[ $words[3] = "events" ]]; then
+                _describe "Options" eventsCommandHelpOutput
+
+                _message -r "
+Usage:  docker container exec [OPTIONS] CONTAINER COMMAND [ARG...]
+
+Execute a command in a running container
+
+Aliases:
+  docker container exec, docker exec
+                "
+
+            elif [[ $words[3] = "export" ]]; then
+                _describe "Options" exportCommandHelpOutput
+
+                _message -r "
+Usage:  docker container export [OPTIONS] CONTAINER
+
+Export a container's filesystem as a tar archive
+
+Aliases:
+  docker container export, docker export
+                "
+
+            elif [[ $words[3] = "inspect" ]]; then
+                argumentOptions=(
+                    "-f:<string>  Format output using a custom template:"
+                    "--format:<string>  Format output using a custom template:"
+                    "-s:Display total file sizes"
+                    "--size:Display total file sizes"
+                )
+                _describe "Options" argumentOptions
+
+                _message -r "
+Usage:  docker container inspect [OPTIONS] CONTAINER [CONTAINER...]
+
+Display detailed information on one or more containers
+                "
+
+            elif [[ $words[3] = "kill" ]]; then
+                _describe "Options" killCommandHelpOutput
+
+                _message -r "
+Usage:  docker container kill [OPTIONS] CONTAINER [CONTAINER...]
+
+Kill one or more running containers
+
+Aliases:
+  docker container kill, docker kill
+                "
+
+            elif [[ $words[3] = "logs" ]]; then
+                _describe "Options" logsCommandHelpOutput
+
+                _message -r "
+Usage:  docker container logs [OPTIONS] CONTAINER
+
+Fetch the logs of a container
+
+Aliases:
+  docker container logs, docker logs
+                "
+
+            elif [[ $words[3] = "ls" ]]; then
+                argumentOptions=(
+                    "-a:Show all containers (default shows just running)"
+                    "--all:Show all containers (default shows just running)"
+                    "-f:<filter>  Filter output based on conditions provided"
+                    "--filter:<filter>  Filter output based on conditions provided"
+                    "--format:<string>  Format output using a custom template."
+                    "-n:<int>  Show n last created containers (includes all states) (default -1)"
+                    "--last:<int>  Show n last created containers (includes all states) (default -1)"
+                    "-l:Show the latest created container (includes all states)"
+                    "--latest:Show the latest created container (includes all states)"
+                    "--no-trunc:Don't truncate output"
+                    "-q:Only display container IDs"
+                    "--quiet:Only display container IDs"
+                    "-s:Display total file sizes"
+                    "--size:Display total file sizes"
+                )
+                _describe "Options" argumentOptions
+
+                _message -r "
+Usage:  docker container ls [OPTIONS]
+
+List containers
+
+Aliases:
+  docker container ls, docker container list, docker container ps, docker ps
+                "
+
+            elif [[ $words[3] = "pause" ]]; then
+                _message -r "
+Usage:  docker container pause CONTAINER [CONTAINER...]
+
+Pause all processes within one or more containers
+
+Aliases:
+  docker container pause, docker pause
+                "
+                
+            elif [[ $words[3] = "port" ]]; then
+                _message -r "
+Usage:  docker container pause CONTAINER [CONTAINER...]
+
+Pause all processes within one or more containers
+
+Aliases:
+  docker container pause, docker pause
+                "
+
+            elif [[ $words[3] = "prune" ]]; then
+                argumentOptions=(
+                    "--filter:<filter>  Provide filter values (e.g. 'until=<timestamp>')"
+                    "-f:Do not prompt for confirmation"
+                    "--force:Do not prompt for confirmation"
+                )
+                _describe "Options" argumentOptions
+
+                _message -r "
+Usage:  docker container prune [OPTIONS]
+
+Remove all stopped containers
+                "
+
+            elif [[ $words[3] = "rename" ]]; then
+                _message -r "
+Usage:  docker container rename CONTAINER NEW_NAME
+
+Rename a container
+
+Aliases:
+  docker container rename, docker rename
+                "
+
+            elif [[ $words[3] = "restart" ]]; then
+                _describe "Options" restartCommandHelpOutput
+
+                _message -r "
+Usage:  docker container restart [OPTIONS] CONTAINER [CONTAINER...]
+
+Restart one or more containers
+
+Aliases:
+  docker container restart, docker restart
+                "
+
+            elif [[ $words[3] = "rm" ]]; then
+                _describe "Options" rmCommandHelpOutput
+
+                _message -r "
+Usage:  docker container rm [OPTIONS] CONTAINER [CONTAINER...]
+
+Remove one or more containers
+
+Aliases:
+  docker container rm, docker container remove, docker rm
+                "
+
+            elif [[ $words[3] = "run" ]]; then
+                _describe "Options" helpPageTemplate2
+
+                _message -r "
+Usage:  docker container run [OPTIONS] IMAGE [COMMAND] [ARG...]
+
+Create and run a new container from an image
+
+Aliases:
+  docker container run, docker run
+                "
+
+            elif [[ $words[3] = "start" ]]; then
+                _describe "Options" startCommandHelpOutput
+
+                _message -r "
+Usage:  docker container start [OPTIONS] CONTAINER [CONTAINER...]
+
+Start one or more stopped containers
+
+Aliases:
+  docker container start, docker start
+                "
+
+            elif [[ $words[3] = "stats" ]]; then
+                _describe "Options" statsCommandHelpOutput
+
+                _message -r "
+Usage:  docker container stats [OPTIONS] [CONTAINER...]
+
+Display a live stream of container(s) resource usage statistics
+
+Aliases:
+  docker container stats, docker stats
+                "
+
+            elif [[ $words[3] = "stop" ]]; then
+                _describe "Options" stopCommandHelpOutput
+
+                _message -r "
+Usage:  docker container stop [OPTIONS] CONTAINER [CONTAINER...]
+
+Stop one or more running containers
+
+Aliases:
+  docker container stop, docker stop
+                "
+
+            elif [[ $words[3] = "top" ]]; then
+
+                _message -r "
+Usage:  docker container top CONTAINER [ps OPTIONS]
+
+Display the running processes of a container
+
+Aliases:
+  docker container top, docker top
+                "
+
+            elif [[ $words[3] = "unpause" ]]; then
+                _message -r "
+Usage:  docker container unpause CONTAINER [CONTAINER...]
+
+Unpause all processes within one or more containers
+
+Aliases:
+  docker container unpause, docker unpause
+                "
+
+            elif [[ $words[3] = "update" ]]; then
+                _describe "Options" updateCommandHelpOutput
+
+                _message -r "
+Usage:  docker container update [OPTIONS] CONTAINER [CONTAINER...]
+
+Update configuration of one or more containers
+
+Aliases:
+  docker container update, docker update
+                "
+
+            elif [[ $words[3] = "wait" ]]; then
+                _message -r "
+Usage:  docker container wait CONTAINER [CONTAINER...]
+
+Block until one or more containers stop, then print their exit codes
+
+Aliases:
+  docker container wait, docker wait
+                "
+
+            fi
+
+        elif [[ $words[2] = "context" ]]; then
+            if [[ $words[3] = "create" ]]; then
+                argumentOptions=(
+                    "--default-stack-orchestrator:<string>  Default orchestrator for stack operations to use with this context (swarm|kubernetes|all)"
+                    "--description:<string>  Description of the context"
+                    "--docker:<stringToString>  Set the docker endpoint (default [])"
+                    "--from:<string>  Create context from a named context"
+                    "-h:Help for create"
+                    "--help:Help for create"
+                    "--kubernetes:<stringToString>  Set the kubernetes endpoint (default [])"
+                )
+                commandCompletions=(
+                    "aci:Create a context for Azure Container Instances"
+                    "ecs:Create a context for Amazon ECS"
+                )
+                _alternative 'Commands:Commands:(($commandCompletions))' 'Options:Flags:(($argumentOptions))' 
+
+                _message -r "
+Create a new context
+
+Create docker engine context:
+$ docker context create CONTEXT [flags]
+
+
+Create Azure Container Instances context:
+$ docker context create aci CONTEXT [flags]
+(see docker context create aci --help)
+
+
+Create Amazon ECS context:
+$ docker context create ecs CONTEXT [flags]
+(see docker context create ecs --help)
+
+
+Docker endpoint config:
+
+NAME                DESCRIPTION
+from                Copy named context's Docker endpoint configuration
+host                Docker endpoint on which to connect
+ca                  Trust certs signed only by this CA
+cert                Path to TLS certificate file
+key                 Path to TLS key file
+skip-tls-verify     Skip TLS certificate validation
+
+Kubernetes endpoint config:
+
+NAME                 DESCRIPTION
+from                 Copy named context's Kubernetes endpoint configuration
+config-file          Path to a Kubernetes config file
+context-override     Overrides the context set in the kubernetes config file
+namespace-override   Overrides the namespace set in the kubernetes config file
+
+Example:
+
+$ docker context create my-context --description "some description" --docker "host=tcp://myserver:2376,ca=~/ca-file,cert=~/cert-file,key=~/key-file"
+
+Usage:
+  docker context create CONTEXT [flags]
+  docker context create [command]
+                "
+
+            elif [[ $words[3] = "export" ]]; then
+                argumentOptions=(
+                    "-h:Help for export"
+                    "--help:Help for export"
+                    "--kubeconfig:Export as a kubeconfig file"
+                )
+                _describe "Options" argumentOptions
+
+                _message -r "
+Export a context to a tar or kubeconfig file
+
+Usage:
+  docker context export [flags]
+                "
+
+            elif [[ $words[3] = "import" ]]; then
+                argumentOptions=(
+                      "-h:Help for import"
+                      "--help:Help for import"
+                )
+                _describe "Flags" argumentOptions
+
+                _message -r "
+Import a context from a tar or zip file
+
+Usage:
+  docker context import [flags]
+                "
+
+            elif [[ $words[3] = "inspect" ]]; then
+                argumentOptions=(
+                    "-f:<string>  Format the output using the given Go template"
+                    "--format:<string>  Format the output using the given Go template"
+                    "-h:Help for inspect"
+                    "--help:Help for inspect"
+                )
+                _describe "Options" argumentOptions
+
+                _message -r "
+Display detailed information on one or more contexts
+
+Usage:
+  docker context inspect [flags]
+
+                "
+
+            elif [[ $words[3] = "list" ]]; then
+                argumentOptions=(
+                    "--format:<string>  Format the output. Values: [pretty | json]. (Default: pretty)"
+                    "-h:Help for list"
+                    "--help:Help for list"
+                    "-q:Only show context names"
+                    "--quiet:Only show context names"
+                )
+                _describe "Flags" argumentOptions
+
+                _message -r "
+List available contexts
+
+Usage:
+  docker context list [flags]
+
+Aliases:
+  list, ls
+                "
+
+            elif [[ $words[3] = "rm" ]]; then
+                argumentOptions=(
+                  "-f:Force removing current context"
+                  "--force:Force removing current context"
+                  "-h:Help for rm"
+                  "--help:Help for rm"
+                )
+                _describe "Flags" argumentOptions
+
+                _message -r "
+Remove one or more contexts
+
+Usage:
+  docker context rm CONTEXT [CONTEXT...] [flags]
+
+Aliases:
+  rm, remove
+                "
+
+            elif [[ $words[3] = "show" ]]; then
+                argumentOptions=(
+                      "-h:Help for show"
+                      "--help:Help for show"
+                )
+                _describe "Flags" argumentOptions
+
+                _message -r "
+Print the current context
+
+Usage:
+  docker context show [flags]
+                "
+
+            elif [[ $words[3] = "update" ]]; then
+                argumentOptions=(
+                    "--default-stack-orchestrator:<string>  Default orchestrator for stack operations to use with this context (swarm|kubernetes|all)"
+                    "--description:<string>  Description of the context"
+                    "--docker:<stringToString>  Set the docker endpoint (default [])"
+                    "-h:Help for update"
+                    "--help:Help for update"
+                    "--kubernetes:<stringToString>  Set the kubernetes endpoint (default [])"
+                )
+                _describe "Flags" argumentOptions
+
+                _message -r "
+Update a context
+
+Docker endpoint config:
+
+NAME                DESCRIPTION
+from                Copy named context's Docker endpoint configuration
+host                Docker endpoint on which to connect
+ca                  Trust certs signed only by this CA
+cert                Path to TLS certificate file
+key                 Path to TLS key file
+skip-tls-verify     Skip TLS certificate validation
+
+Kubernetes endpoint config:
+
+NAME                 DESCRIPTION
+from                 Copy named context's Kubernetes endpoint configuration
+config-file          Path to a Kubernetes config file
+context-override     Overrides the context set in the kubernetes config file
+namespace-override   Overrides the namespace set in the kubernetes config file
+
+Example:
+
+$ docker context update my-context --description 'some description' --docker 'host=tcp://myserver:2376,ca=~/ca-file,cert=~/cert-file,key=~/key-file'
+
+Usage:
+  docker context update [flags]
+
+                "
+
+            elif [[ $words[3] = "use" ]]; then
+                argumentOptions=(
+                      "-h:Help for use"
+                      "--help:Help for use"
+                )
+                _describe "Flags" argumentOptions
+
+                _message -r "
+Set the default context
+
+Usage:
+  docker context use CONTEXT [flags]
+                "
+
+            fi
+
+        elif [[ $words[2] = "dev" ]]; then
+            if [[ $words[3] = "check" ]]; then
+                argumentOptions=(
+                    "-f:<string>  Format the output. Values: [pretty | json]. (Default: pretty)"
+                    "--format:<string>  Format the output. Values: [pretty | json]. (Default: pretty)"
+                )
+                _describe "Options" argumentOptions
+
+                _message -r "
+Usage:  docker dev check [OPTIONS]
+
+Check Dev Environments
+                "
+
+            elif [[ $words[3] = "create" ]]; then
+                argumentOptions=(
+                    "--base-image:<string>  Base image to use for the dev environment"
+                    "-d:Detach creates a Dev Env without attaching to it's logs"
+                    "--detach:Detach creates a Dev Env without attaching to it's logs"
+                    "--language:<string>  Language to use for the dev environment. []"
+                    "--name:<string>  Name of the Dev Env. Will be autogenerated if not specified"
+                    "-o:Open IDE after a successful creation"
+                    "--open:Open IDE after a successful creation"
+                    "--path:<string>  Local path to clone repository."
+                )
+                _describe "Options" argumentOptions
+
+                _message -r "
+Usage:  docker dev create [OPTIONS] (LOCAL_PATH | REPOSITORY_URL)
+
+Create a new dev environment
+
+Aliases:
+  create, new
+                "
+
+            elif [[ $words[3] = "list" ]]; then
+                argumentOptions=(
+                    "-f:<string>  Format the output. Values: [pretty | json]. (Default: pretty)"
+                    "--format:<string>  Format the output. Values: [pretty | json]. (Default: pretty)"
+                    "-q:Only show Dev Environments names"
+                    "--quiet:Only show Dev Environments names"
+                )
+                _describe "Options" argumentOptions
+
+                _message -r "
+Usage:  docker dev list [OPTIONS]
+
+Lists all Dev Environments
+
+Aliases:
+  list, ls
+                "
+
+            elif [[ $words[3] = "logs" ]]; then
+                _message -r "
+Usage:  docker dev logs [OPTIONS] DEV_ENV_NAME
+
+Traces logs from a dev environment
+                "
+
+            elif [[ $words[3] = "open" ]]; then
+                argumentOptions=(
+                    "-e:<string>  Editor"
+                    "--editor:<string>  Editor"
+                )
+                _describe "Options" argumentOptions
+
+                _message -r "
+Usage:  docker dev open <DEV_ENV_NAME> <CONTAINER_REF> [OPTIONS]. Note that DEV_ENV_NAME and CONTAINER_REF are optional.
+
+Open Dev Environment with the IDE
+                "
+
+            elif [[ $words[3] = "rm" ]]; then
+                _message -r "
+Usage:  docker dev rm DEV_ENV_NAME...
+
+Removes a dev environment
+
+Aliases:
+  rm, remove
+                "
+
+            elif [[ $words[3] = "start" ]]; then
+                _message -r "
+Usage:  docker dev start DEV_ENV_NAME...
+
+Starts a dev environment
+                "
+
+            elif [[ $words[3] = "stop" ]]; then
+                _message -r "
+Usage:  docker dev stop DEV_ENV_NAME...
+
+Stops a dev environment
+                "
+
+            elif [[ $words[3] = "version" ]]; then
+                argumentOptions=(
+                    "-f:<string>  Format the output. Values: [pretty | json]. (Default: pretty)"
+                    "--format:<string>  Format the output. Values: [pretty | json]. (Default: pretty)"
+                    "-s:Shows only Docker Dev's version number."
+                    "--short:Shows only Docker Dev's version number."
+                )
+                _describe "Options" argumentOptions
+
+                _message -r "
+Usage:  docker dev version [OPTIONS]
+                "
+
+            elif [[ $words[3] = "service" ]]; then
+                argumentOptions=(
+                    "start:Start service on a dev environment"
+                )
+                _describe "Options" argumentOptions
+
+                _message -r "
+Usage:  docker dev service COMMAND
+
+Service management on a dev environment
+                "
+            fi
+
+
+        elif [[ $words[2] = "extension" ]]; then
+            if [[ $words[3] = "init" ]]; then
+                argumentOptions=(
+                    "--image-repo:<string>  Image Repository where the extension will be pushed (required with --quiet)"
+                    "-q:Use quiet to not prompt questions and use default values as answers."
+                    "--quiet:Use quiet to not prompt questions and use default values as answers."
+                    "--title:<string>  Title of your extension as it will appear in the Marketplace (required with --quiet)"
+                    "--version:<string>  Minimum extension SDK version the extension is compatible with"
+                )
+                _describe "Options" argumentOptions
+
+                _message -r "
+Usage:  docker extension init [FOLDER]
+
+Create a new Docker Extension based on a template.
+
+Examples:
+docker extension init my-extension
+                "
+
+            elif [[ $words[3] = "install" ]]; then
+                argumentOptions=(
+                    "-f:Do not prompt for confirmation"
+                    "--force:Do not prompt for confirmation"
+                )
+                _describe "Options" argumentOptions
+
+                _message -r "
+Usage:  docker extension install IMAGE[:TAG]
+
+Install a Docker extension with the specified image
+                "
+
+            elif [[ $words[3] = "ls" ]]; then
+                argumentOptions=(
+                    "--format:<string>  Format the output. Values: [pretty | json]. (default "pretty")"
+                    "-q:Only display IDs."
+                    "--quiet:Only display IDs."
+                )
+                _describe "Options" argumentOptions
+
+                _message -r "
+Usage:  docker extension ls
+
+List installed Docker extensions
+
+Aliases:
+  ls, list
+                "
+
+            elif [[ $words[3] = "rm" ]]; then
+                _message -r "
+Usage:  docker extension rm EXTENSION
+
+Remove a Docker extension
+
+Aliases:
+  rm, uninstall, remove
+                "
+
+            elif [[ $words[3] = "share" ]]; then
+                _message -r "
+Usage:  docker extension share IMAGE:[TAG]
+
+Generate a URL to distribute an extension. Clicking on this link will display the extension in Docker Desktop, allowing an easy install.
+                "
+
+            elif [[ $words[3] = "update" ]]; then
+                argumentOptions=(
+                    "-f:Do not prompt for confirmation"
+                    "--force:Do not prompt for confirmation"
+                )
+                _describe "Options" argumentOptions
+
+                _message -r "
+Usage:  docker extension update EXTENSION
+
+Remove and re-install a Docker extension
+                "
+
+            elif [[ $words[3] = "validate" ]]; then
+                argumentOptions=(
+                    "-a:Use the greatest semver tag available in the DockerHub repository (overrides the tag specified, if any)"
+                    "--auto-resolve-tag:Use the greatest semver tag available in the DockerHub repository (overrides the tag specified, if any)"
+                    "-e:Only outputs validation errors (no log or debug messages). Can't be set alongside verbose flag."
+                    "--errors-only:Only outputs validation errors (no log or debug messages). Can't be set alongside verbose flag."
+                    "-s:Validate the extension is compatible with the SDK version (requires having Docker Desktop running)"
+                    "--sdk-compatibility:Validate the extension is compatible with the SDK version (requires having Docker Desktop running)"
+                    "-i:Validate the installation and uninstallation process"
+                    "--validate-install-uninstall:Validate the installation and uninstallation process"
+                    "-v:Show a more verbose output"
+                    "--verbose:Show a more verbose output"
+                )
+                _describe "Options" argumentOptions
+
+                _message -r "
+Usage:  docker extension validate [IMAGE | metadata.json]
+
+Validate an extension image or metadata file
+                "
+
+            elif [[ $words[3] = "version" ]]; then
+                _message -r "
+Usage:  docker extension version
+
+Print the client and server versions
+                "
+
+            elif [[ $words[3] = "dev" ]]; then
+                argumentOptions=(
+                    "debug:Set the debug mode for an extension"
+                    "reset:Reset the source and disables the debug mode for the extension UI"
+                    "ui-source:Set a new source for the extension UI"
+                )
+                _describe "Options" argumentOptions
+
+                _message -r "
+Usage:  docker extension dev COMMAND
+
+Extension development helpers
+                "
+
+
+            fi
+        
+        elif [[ $words[2] = "image" ]]; then
+            if [[ $words[3] = "build" ]]; then
+                _describe "Options" helpPageTemplate1
+
+                _message -r "
+Usage:  docker buildx build [OPTIONS] PATH | URL | -
+
+Start a build
+
+Aliases:
+  docker buildx build, docker buildx b
+                "
+
+            elif [[ $words[3] = "history" ]]; then
+                _describe "Options" historyCommandHelpOutput
+
+                _message -r "
+Usage:  docker image history [OPTIONS] IMAGE
+
+Show the history of an image
+
+Aliases:
+  docker image history, docker history
+                "
+
+            elif [[ $words[3] = "import" ]]; then
+                _describe "Options" importCommandHelpOutput
+
+                _message -r "
+Usage:  docker image import [OPTIONS] file|URL|- [REPOSITORY[:TAG]]
+
+Import the contents from a tarball to create a filesystem image
+
+Aliases:
+  docker image import, docker import
+                "
+
+            elif [[ $words[3] = "inspect" ]]; then
+                argumentOptions=(
+                    "-f:<string>  Format output using a custom template."
+                    "--format:<string>  Format output using a custom template."
+                )
+                _describe "Options" argumentOptions
+
+                _message -r "
+Usage:  docker image inspect [OPTIONS] IMAGE [IMAGE...]
+
+Display detailed information on one or more images
+                "
+
+            elif [[ $words[3] = "load" ]]; then
+                _describe "Options" loadCommandHelpOutput
+
+                _message -r "
+Usage:  docker image load [OPTIONS]
+
+Load an image from a tar archive or STDIN
+
+Aliases:
+  docker image load, docker load
+                "
+
+            elif [[ $words[3] = "ls" ]]; then
+                argumentOptions=(
+                    "-a:Show all images (default hides intermediate images)"
+                    "--all:Show all images (default hides intermediate images)"
+                    "--digests:Show digests"
+                    "-f:<filter>  Filter output based on conditions provided"
+                    "--filter:<filter>  Filter output based on conditions provided"
+                    "--format:<string>  Format output using a custom template."
+                    "--no-trunc:Don't truncate output"
+                    "-q:Only show image IDs"
+                    "--quiet:Only show image IDs"
+                )
+                _describe "Options" argumentOptions
+
+                _message -r "
+Usage:  docker image ls [OPTIONS] [REPOSITORY[:TAG]]
+
+List images
+
+Aliases:
+  docker image ls, docker image list, docker images
+                "
+
+            elif [[ $words[3] = "prune" ]]; then
+                argumentOptions=(
+                    "-a:Remove all unused images, not just dangling ones"
+                    "--all:Remove all unused images, not just dangling ones"
+                    "--filter:<filter>  Provide filter values (e.g. 'until=<timestamp>')"
+                    "-f:Do not prompt for confirmation"
+                    "--force:Do not prompt for confirmation"
+                )
+                _describe "Options" argumentOptions
+
+                _message -r "
+Usage:  docker image prune [OPTIONS]
+
+Remove unused images
+                "
+
+            elif [[ $words[3] = "pull" ]]; then
+                argumentOptions=(
+                    "-a:Download all tagged images in the repository"
+                    "--all-tags:Download all tagged images in the repository"
+                    "--disable-content-trust:Skip image verification (default true)"
+                    "--platform:<string>  Set platform if server is multi-platform capable"
+                    "-q:Suppress verbose output"
+                    "--quiet:Suppress verbose output"
+                )
+                _describe "Options" argumentOptions
+
+                _message -r "
+Usage:  docker image pull [OPTIONS] NAME[:TAG|@DIGEST]
+
+Download an image from a registry
+
+Aliases:
+  docker image pull, docker pull
+                "
+
+            elif [[ $words[3] = "push" ]]; then
+                argumentOptions=(
+                    "-a:Push all tags of an image to the repository"
+                    "--all-tags:Push all tags of an image to the repository"
+                    "--disable-content-trust:Skip image signing (default true)"
+                    "-q:Suppress verbose output"
+                    "--quiet:Suppress verbose output"
+                )
+                _describe "Options" argumentOptions
+
+                _message -r "
+Usage:  docker image push [OPTIONS] NAME[:TAG]
+
+Upload an image to a registry
+
+Aliases:
+  docker image push, docker push
+                "
+
+            elif [[ $words[3] = "rm" ]]; then
+                argumentOptions=(
+                    "-f:Force removal of the image"
+                    "--force:Force removal of the image"
+                    "--no-prune:Do not delete untagged parents"
+                )
+                _describe "Options" argumentOptions
+
+                _message -r "
+Usage:  docker image rm [OPTIONS] IMAGE [IMAGE...]
+
+Remove one or more images
+
+Aliases:
+  docker image rm, docker image remove, docker rmi
+                "
+
+            elif [[ $words[3] = "save" ]]; then
+                _describe "Options" saveCommandHelpOutput
+
+                _message -r "
+Usage:  docker image save [OPTIONS] IMAGE [IMAGE...]
+
+Save one or more images to a tar archive (streamed to STDOUT by default)
+
+Aliases:
+  docker image save, docker save
+                "
+
+            elif [[ $words[3] = "tag" ]]; then
+                _message -r "
+Usage:  docker image tag SOURCE_IMAGE[:TAG] TARGET_IMAGE[:TAG]
+
+Create a tag TARGET_IMAGE that refers to SOURCE_IMAGE
+
+Aliases:
+  docker image tag, docker tag
+                "
+            fi
+
+        elif [[ $words[2] = "manifest" ]]; then
+            if [[ $words[3] = "annotate" ]]; then
+                argumentOptions=(
+                    "--arch:<string>  Set architecture"
+                    "--os:<string>  Set operating system"
+                    "--os-features:<strings>  Set operating system feature"
+                    "--os-version:<string>  Set operating system version"
+                    "--variant:<string>  Set architecture variant"
+                )
+                _describe "Options" argumentOptions
+
+                _message -r "
+Usage:  docker manifest annotate [OPTIONS] MANIFEST_LIST MANIFEST
+
+Add additional information to a local image manifest
+
+EXPERIMENTAL:
+  docker manifest annotate is an experimental feature.
+  Experimental features provide early access to product functionality. These
+  features may change between releases without warning, or can be removed from a
+  future release.
+
+  Learn more about experimental features in our documentation:
+  https://docs.docker.com/go/experimental/
+                "
+
+            elif [[ $words[3] = "create" ]]; then
+                argumentOptions=(
+                    "-a:Amend an existing manifest list"
+                    "--amend:Amend an existing manifest list"
+                    "--insecure:Allow communication with an insecure registry"
+                )
+                _describe "Options" argumentOptions
+
+                _message -r "
+Usage:  docker manifest create MANIFEST_LIST MANIFEST [MANIFEST...]
+
+Create a local manifest list for annotating and pushing to a registry
+
+EXPERIMENTAL:
+  docker manifest create is an experimental feature.
+  Experimental features provide early access to product functionality. These
+  features may change between releases without warning, or can be removed from a
+  future release.
+
+  Learn more about experimental features in our documentation:
+  https://docs.docker.com/go/experimental/
+                "
+            elif [[ $words[3] = "inspect" ]]; then
+                argumentOptions=(
+                    "--insecure:Allow communication with an insecure registry"
+                    "-v:Output additional info including layers and platform"
+                    "--verbose:Output additional info including layers and platform"
+                )
+                _describe "Options" argumentOptions
+
+                _message -r "
+Usage:  docker manifest inspect [OPTIONS] [MANIFEST_LIST] MANIFEST
+
+Display an image manifest, or manifest list
+
+EXPERIMENTAL:
+  docker manifest inspect is an experimental feature.
+  Experimental features provide early access to product functionality. These
+  features may change between releases without warning, or can be removed from a
+  future release.
+
+  Learn more about experimental features in our documentation:
+  https://docs.docker.com/go/experimental/
+
+                "
+
+            elif [[ $words[3] = "push" ]]; then
+                argumentOptions=(
+                    "--insecure:Allow push to an insecure registry"
+                    "-p:Remove the local manifest list after push"
+                    "--purge:Remove the local manifest list after push"
+                )
+                _describe "Options" argumentOptions
+
+                _message -r "
+Usage:  docker manifest push [OPTIONS] MANIFEST_LIST
+
+Push a manifest list to a repository
+
+EXPERIMENTAL:
+  docker manifest push is an experimental feature.
+  Experimental features provide early access to product functionality. These
+  features may change between releases without warning, or can be removed from a
+  future release.
+
+  Learn more about experimental features in our documentation:
+  https://docs.docker.com/go/experimental/
+                "
+
+            elif [[ $words[3] = "rm" ]]; then
+                _message -r "
+Usage:  docker manifest rm MANIFEST_LIST [MANIFEST_LIST...]
+
+Delete one or more manifest lists from local storage
+
+EXPERIMENTAL:
+  docker manifest rm is an experimental feature.
+  Experimental features provide early access to product functionality. These
+  features may change between releases without warning, or can be removed from a
+  future release.
+
+  Learn more about experimental features in our documentation:
+  https://docs.docker.com/go/experimental/
+                "
+            fi
+
+        elif [[ $words[2] = "network" ]]; then
+            if [[ $words[3] = "connect" ]]; then
+                argumentOptions=(
+                    "--alias:<strings>  Add network-scoped alias for the container"
+                    "--driver-opt:<strings>  driver options for the network"
+                    "--ip:<string>  IPv4 address (e.g., "172.30.100.104")"
+                    "--ip6:<string>  IPv6 address (e.g., "2001:db8::33")"
+                    "--link:<list>  Add link to another container"
+                    "--link-local-ip:<strings>  Add a link-local address for the container"
+                )
+                _describe "Options" argumentOptions
+
+                _message -r "
+Usage:  docker network connect [OPTIONS] NETWORK CONTAINER
+
+Connect a container to a network
+                "
+
+            elif [[ $words[3] = "create" ]]; then
+                argumentOptions=(
+                    "--attachable:Enable manual container attachment"
+                    "--aux-address:<map>  Auxiliary IPv4 or IPv6 addresses used by Network driver (default map[])"
+                    "--config-from:<string>  The network from which to copy the configuration"
+                    "--config-only:Create a configuration only network"
+                    "-d:Driver to manage the Network (default "bridge")"
+                    "--driver:<string>        Driver to manage the Network (default "bridge")"
+                    "--gateway:<strings>  IPv4 or IPv6 Gateway for the master subnet"
+                    "--ingress:Create swarm routing-mesh network"
+                    "--internal:Restrict external access to the network"
+                    "--ip-range:<strings>  Allocate container ip from a sub-range"
+                    "--ipam-driver:<string>  IP Address Management Driver (default "default")"
+                    "--ipam-opt:<map>  Set IPAM driver specific options (default map[])"
+                    "--ipv6:Enable IPv6 networking"
+                    "--label:<list>  Set metadata on a network"
+                    "-o:<map>  Set driver specific options (default map[])"
+                    "--opt:<map>  Set driver specific options (default map[])"
+                    "--scope:<string>  Control the network's scope"
+                    "--subnet:<strings>  Subnet in CIDR format that represents a network segment"
+
+                )
+                _describe "Options" argumentOptions
+
+                _message -r "
+Usage:  docker network create [OPTIONS] NETWORK
+
+Create a network
+                "
+
+            elif [[ $words[3] = "disconnect" ]]; then
+                argumentOptions=(
+                    "-f:Force the container to disconnect from a network"
+                    "--force:Force the container to disconnect from a network"
+                )
+                _describe "Options" argumentOptions
+
+                _message -r "
+Usage:  docker network disconnect [OPTIONS] NETWORK CONTAINER
+
+Disconnect a container from a network
+                "
+
+            elif [[ $words[3] = "inspect" ]]; then
+                argumentOptions=(
+                    "-f:<string>  Format output using a custom template."
+                    "--format:<string>  Format output using a custom template."
+                    "-v:Verbose output for diagnostics"
+                    "--verbose:Verbose output for diagnostics"
+                )
+                _describe "Options" argumentOptions
+
+                _message -r "
+Usage:  docker network inspect [OPTIONS] NETWORK [NETWORK...]
+
+Display detailed information on one or more networks
+                "
+
+            elif [[ $words[3] = "ls" ]]; then
+                argumentOptions=(
+                    "-f:<filter>  Provide filter values (e.g. 'driver=bridge')"
+                    "--filter:<filter>  Provide filter values (e.g. 'driver=bridge')"
+                    "--format:<string>  Format output using a custom template."
+                    "--no-trunc:Do not truncate the output"
+                    "-q:Only display network IDs"
+                    "--quiet:Only display network IDs"
+                )
+                _describe "Options" argumentOptions
+
+                _message -r "
+Usage:  docker network ls [OPTIONS]
+
+List networks
+
+Aliases:
+  docker network ls, docker network list
+                "
+
+            elif [[ $words[3] = "prune" ]]; then
+                argumentOptions=(
+                    "--filter:<filter>  Provide filter values (e.g. 'until=<timestamp>')"
+                    "-f:Do not prompt for confirmation"
+                    "--force:Do not prompt for confirmation"
+                )
+                _describe "Options" argumentOptions
+
+                _message -r "
+Usage:  docker network prune [OPTIONS]
+
+Remove all unused networks
+                "
+
+            elif [[ $words[3] = "rm" ]]; then
+                argumentOptions=(
+                    "--filter:<filter>  Provide filter values (e.g. 'until=<timestamp>')"
+                    "-f:Do not prompt for confirmation"
+                    "--force:Do not prompt for confirmation"
+                )
+                _describe "Options" argumentOptions
+
+                _message -r "
+Usage:  docker network prune [OPTIONS]
+
+Remove all unused networks
+                "
+            fi
+            
+        elif [[ $words[2] = "plugin" ]]; then
+
+            if [[ $words[3] = "create" ]]; then
+                _message -r '
+Usage:  docker plugin create [OPTIONS] PLUGIN PLUGIN-DATA-DIR
+
+Create a plugin from a rootfs and configuration. Plugin data directory must contain config.json and rootfs directory.
+
+Options:
+      --compress   Compress the context using gzip
+                            '
+
+            elif [[ $words[3] = "disable" ]]; then
+                argumentOptions=(
+                    "-f:Force the disable of an active plugin"
+                    "--force:Force the disable of an active plugin"
+                )
+                _describe 'Commands' argumentOptions
+                _message -r '
+Usage:  docker plugin disable [OPTIONS] PLUGIN
+
+Disable a plugin
+                            '
+
+            elif [[ $words[3] = "enable" ]]; then
+                _message -r '
+Usage:  docker plugin enable [OPTIONS] PLUGIN
+
+Enable a plugin
+
+Options:
+      --timeout int   HTTP client timeout (in seconds) (default 30)
+                            '
+
+            elif [[ $words[3] = "inspect" ]]; then
+                argumentOptions=(
+                    "-f:<string>  Format output using a custom template."
+                    "--format:<string>  Format output using a custom template."
+                )
+                _describe 'Commands' argumentOptions
+                _message -r '
+Usage:  docker plugin inspect [OPTIONS] PLUGIN [PLUGIN...]
+
+Display detailed information on one or more plugins
+                            '
+
+
+            elif [[ $words[3] = "install" ]]; then
+                argumentOptions=(
+                    "--alias:<string>  Local name for plugin"
+                    "--disable:Do not enable the plugin on install"
+                    "--disable-content-trust:Skip image verification (default true)"
+                    "--grant-all-permissions:Grant all permissions necessary to run the plugin"
+
+                )
+                _describe 'Commands' argumentOptions
+                _message -r '
+Usage:  docker plugin install [OPTIONS] PLUGIN [KEY=VALUE...]
+
+Install a plugin
+                            '
+
+
+            elif [[ $words[3] = "ls" ]]; then
+                argumentOptions=(
+                    "-f:<filter>  Provide filter values (e.g. "enabled=true")"
+                    "--filter:<filter>  Provide filter values (e.g. "enabled=true")"
+                    "--format:<string>  Format output using a custom template."
+                    "--no-trunc:Don't truncate output"
+                    "-q:Only display plugin IDs"
+                    "--quiet:Only display plugin IDs"
+                )
+                _describe 'Commands' argumentOptions
+                _message -r '
+Usage:  docker plugin ls [OPTIONS]
+
+List plugins
+
+Aliases:
+  docker plugin ls, docker plugin list
+                            '
+
+
+            elif [[ $words[3] = "push" ]]; then
+                _message -r '
+Usage:  docker plugin push [OPTIONS] PLUGIN[:TAG]
+
+Push a plugin to a registry
+
+Options:
+      --disable-content-trust   Skip image signing (default true)
+                            '
+
+            elif [[ $words[3] = "rm" ]]; then
+                argumentOptions=(
+                    "-f:Force the removal of an active plugin"
+                    "--force:Force the removal of an active plugin"
+                )
+                _describe 'Commands' argumentOptions
+                _message -r '
+Usage:  docker plugin rm [OPTIONS] PLUGIN [PLUGIN...]
+
+Remove one or more plugins
+
+Aliases:
+  docker plugin rm, docker plugin remove
+                            '
+
+            elif [[ $words[3] = "set" ]]; then
+                _message -r '
+Usage:  docker plugin set PLUGIN KEY=VALUE [KEY=VALUE...]
+
+Change settings for a plugin
+                            '
+
+            elif [[ $words[3] = "upgrade" ]]; then
+                argumentOptions=(
+                    "--disable-content-trust:Skip image verification (default true)"
+                    "--grant-all-permissions:Grant all permissions necessary to run the plugin"
+                    "--skip-remote-check:Do not check if specified remote plugin matches existing plugin image"
+                )
+                _describe 'Commands' argumentOptions
+                _message -r '
+Usage:  docker plugin upgrade [OPTIONS] PLUGIN [REMOTE]
+
+Upgrade an existing plugin
+                            '
+            fi
+
+        elif [[ $words[2] = "sbom" ]]; then
+            if [[ $words[3] = "version" ]]; then
+                _message -r '
+Usage:  docker sbom version
+
+Show Docker sbom version information
+                            '
+            fi
+
+        elif [[ $words[2] = "scout" ]]; then
+            if [[ $words[3] = "attestation" ]]; then
+                _message -r "
+ Manage attestations on image indexes
+
+Usage
+
+Aliases
+  attestation, attest
+
+Available Commands
+  add         Add attestation to image
+
+Use 'docker scout attestation [command] --help' for more information about a command.
+
+Learn More
+  Read docker scout cli reference at https://docs.docker.com/engine/reference/commandline/scout/
+                "
+
+            elif [[ $words[3] = "cache" ]]; then
+                _message -r "
+Manage Docker Scout cache and temporary files
+
+Usage
+
+Available Commands
+  df          Show Docker Scout disk usage
+  prune       Remove temporary or cached data
+
+Use 'docker scout cache [command] --help' for more information about a command.
+
+Learn More
+  Read docker scout cli reference at https://docs.docker.com/engine/reference/commandline/scout/
+                "
+
+            elif [[ $words[3] = "config" ]]; then
+                _message -r "
+Manage Docker Scout configuration
+
+Usage
+  docker scout config [KEY] [VALUE]
+
+Description
+List, get and set Docker Scout configuration.
+
+Available configuration key(s):
+- organization: Namespace of the Docker organization to be used by default if it cannot be inferred from the image reference
+
+
+
+Examples
+  List existing configuration
+  $ docker scout config
+
+  Print existing value of a configuration, here organization
+  $ docker scout config organization
+
+  Set a configuration
+  $ docker scout config organization my-org-namespace
+
+Learn More
+  Read docker scout cli reference at https://docs.docker.com/engine/reference/commandline/scout/
+                "
+
+            elif [[ $words[3] = "cves" ]]; then
+                argumentOptions=(
+                    "--details:Print details on default text output"
+                    "--env:<string>  Name of environment"
+                    "-e:Return exit code "2" if vulnerabilities are detected"
+                    "--exit-code:Return exit code "2" if vulnerabilities are detected"
+                    "--format:<string>  Output format of the generated vulnerability report."
+                    "--ignore-base:Filter out CVEs introduced from base image"
+                    "--locations:Print package locations including file paths and layer diff_id"
+                    "--multi-stage:Show packages from multi-stage Docker builds"
+                    "--only-cve-id:<strings>  Comma separated list of CVE ids (like CVE-2021-45105) to search for"
+                    "--only-fixed:Filter to fixable CVEs"
+                    "--only-metric:<strings>  Comma separated list of CVSS metrics (like AV:N or PR:L) to filter CVEs by"
+                    "--only-package:<strings>  Comma separated regular expressions to filter packages by"
+                    "--only-package-type:<strings>  Comma separated list of package types (like apk, deb, rpm, npm, pypi, golang, etc)"
+                    "--only-severity:<strings>  Comma separated list of severities (critical, high, medium, low, unspecified) to filter CVEs by"
+                    "--only-stage:<strings>  Comma separated list of multi-stage Docker build stage names"
+                    "--only-unfixed:Filter to unfixed CVEs"
+                    "--only-vex-affected:Filter CVEs by VEX statements with status not affected"
+                    "--only-vuln-packages:When used with --format=only-packages ignore packages with no vulnerabilities"
+                    "--org:<string>  Namespace of the Docker organization"
+                    "-o:<string>  Write the report to a file"
+                    "--output:<string>  Write the report to a file"
+                    "--platform:<string>  Platform of image to analyze"
+                    "--ref:<string>  Reference to use if the provided tarball contains multiple references. Can only be used with archive"
+                    "--vex-author:<strings>  List of VEX statement authors to accept"
+                    "--vex-location:<strings>  File location of directory or file containing VEX statements"
+                )
+                _describe 'Flags' argumentOptions
+                _message -r '
+ Display CVEs identified in a software artifact
+
+Usage
+  docker scout cves [OPTIONS] [IMAGE|DIRECTORY|ARCHIVE]
+
+Description
+The docker scout cves command analyzes a software artifact for vulnerabilities.
+
+If no image is specified, the most recently built image is used.
+
+The following artifact types are supported:
+
+- Images
+- OCI layout directories
+- Tarball archives, as created by docker save
+- Local directory or file
+
+The tool analyzes the provided software artifact, and generates a vulnerability report.
+
+By default, the tool expects an image reference, such as:
+
+- redis
+- curlimages/curl:7.87.0
+- mcr.microsoft.com/dotnet/runtime:7.0
+
+Learn More
+  Read docker scout cli reference at https://docs.docker.com/engine/reference/commandline/scout/
+                '
+
+            elif [[ $words[3] = "enroll" ]]; then
+                _message -r '
+Enroll an organization with Docker Scout
+
+Usage
+  docker scout enroll ORG
+
+Description
+The docker scout enroll command enrolls an organization with Docker Scout.
+
+Learn More
+  Read docker scout cli reference at https://docs.docker.com/engine/reference/commandline/scout/
+                '
+
+            elif [[ $words[3] = "environment" ]]; then
+                argumentOptions=(
+                    "--org:<string>  Namespace of the Docker organization"
+                    "-o:<string>  Write the report to a file"
+                    "--output:<string>  Write the report to a file"
+                    "--platform:<string>  Platform of image to record"
+                )
+                _describe 'Commands' argumentOptions
+                _message -r '
+Manage environments (experimental)
+
+Usage
+  docker scout environment [ENVIRONMENT] [IMAGE]
+
+Aliases
+  environment, env
+
+Description
+The docker scout environment command lists the environments and records images to it.
+
+    This command is experimental and its behaviour might change in the future
+
+Once recorded, environments can be referred to by their name, eg. in the docker scout compare command using --to-env.
+                '
+
+            elif [[ $words[3] = "help" ]]; then
+                _message -r '
+Display information about the available commands
+
+Usage
+  docker scout help
+
+Learn More
+  Read docker scout cli reference at https://docs.docker.com/engine/reference/commandline/scout/
+                '
+
+            elif [[ $words[3] = "integration" ]]; then
+                argumentOptions=(
+                    "configure:Configure or update a new integration configuration"
+                    "delete:Delete a new integration configuration"
+                    "list:Integration Docker Scout"
+                )
+                _describe 'Commands' argumentOptions
+                _message -r '
+ Commands to list, configure, and delete Docker Scout integrations
+
+Use "docker scout integration [command] --help" for more information about a command.
+
+Learn More
+  Read docker scout cli reference at https://docs.docker.com/engine/reference/commandline/scout/
+                '
+
+            elif [[ $words[3] = "policy" ]]; then
+                argumentOptions=(
+                    "-e:Return exit code '2' if policies are not met, '0' otherwise"
+                    "--exit-code:Return exit code '2' if policies are not met, '0' otherwise"
+                    "--org:<string>  Namespace of the Docker organization"
+                    "-o:<string>  Write the report to a file"
+                    "--output:<string>  Write the report to a file"
+                    "--platform:<string>  Platform of image to pull policy results from"
+                    "--to-env:<string>  Name of the environment to compare to"
+                    "--to-latest:Latest image processed to compare to"
+                )
+                _describe 'Commands' argumentOptions
+                _message -r '
+Evaluate policies against an image and display the policy evaluation results (experimental)
+
+Usage
+  docker scout policy [IMAGE | REPO]
+
+Description
+The docker scout policy command evaluates policies against an image and displays the policy evaluation results. If the policy results for an image are already available in the Scout platform, they are retrieved from there, otherwise the policies are evaluated locally. It can also compare policy results for a repository in a specific environment.
+
+Examples
+  Evaluate policies against an image:
+  $ docker scout policy IMAGE
+
+  Evaluate policies against an image for a specific organization:
+  $ docker scout policy IMAGE --org ORG
+
+  Evaluate policies against an image with a specific platform:
+  $ docker scout policy IMAGE --platform PLATFORM
+
+  Compare policy results for a repository in a specific environment:
+  $ docker scout policy REPO --to-env ENV
+  
+Learn More
+  Read docker scout cli reference at https://docs.docker.com/engine/reference/commandline/scout/
+                '
+
+            elif [[ $words[3] = "quickview" ]]; then
+                argumentOptions=(
+                    "--env:<string>  Name of the environment"
+                    "--latest:Latest indexed image"
+                    "--org:<string>  Namespace of the Docker organization"
+                    "-o:<string>  Write the report to a file"
+                    "--output:<string>  Write the report to a file"
+                    "--platform:<string>  Platform of image to analyze"
+                    "--ref:<string>  Reference to use if the provided tarball contains multiple references. Can only be used with archive"
+                )
+                _describe 'Commands' argumentOptions
+                _message -r '
+ Quick overview of an image
+
+Usage
+  docker scout quickview [IMAGE|DIRECTORY|ARCHIVE]
+
+Aliases
+  quickview, qv
+
+Description
+The docker scout quickview command displays a quick overview of an image.
+It displays a summary of the vulnerabilities in the image and the vulnerabilities from the base image.
+If available it also displays base image refresh and update recommendations.
+
+If no image is specified, the most recently built image is used.
+
+The following artifact types are supported:
+
+- Images
+- OCI layout directories
+- Tarball archives, as created by docker save
+- Local directory or file
+
+The tool analyzes the provided software artifact, and generates a vulnerability report.
+                '
+
+            elif [[ $words[3] = "recommendations" ]]; then
+                argumentOptions=(
+                    "--only-refresh:Only display base image refresh recommendations"
+                    "--only-update:Only display base image update recommendations"
+                    "--org:<string>  Namespace of the Docker organization"
+                    "-o:<string>  Write the report to a file"
+                    "--output:<string>  Write the report to a file"
+                    "--platform:<string>  Platform of image to analyze"
+                    "--ref:<string>  Reference to use if the provided tarball contains multiple references. Can only be used with archive"
+                    "--tag:<string>  Specify tag"
+                )
+                _describe 'Commands' argumentOptions
+                _message -r '
+Display available base image updates and remediation recommendations
+
+Usage
+  docker scout recommendations [IMAGE|DIRECTORY|ARCHIVE]
+
+Description
+The docker scout recommendations command displays recommendations for base images updates.
+It analyzes the image and display recommendations to refresh or update the base image.
+For each recommendation it shows a list of benefits like less vulnerabilities, smaller image, etc.
+
+If no image is specified, the most recently built image is used.
+
+The following artifact types are supported:
+
+- Images
+- OCI layout directories
+- Tarball archives, as created by docker save
+- Local directory or file
+
+The tool analyzes the provided software artifact, and generates a vulnerability report.
+                '
+
+            elif [[ $words[3] = "repo" ]]; then
+                argumentOptions=(
+                    "disable:Disable Docker Scout"
+                    "enable:Enable Docker Scout"
+                    "list:List Docker Scout repositories"
+                )
+                _describe 'Commands' argumentOptions
+                _message -r '
+ Commands to list, enable, and disable Docker Scout on repositories
+                '
+
+            elif [[ $words[3] = "version" ]]; then
+                _message -r '
+Show Docker Scout version information
+
+Usage
+  docker scout version
+                '
+
+            fi
+
+        elif [[ $words[2] = "trust" ]]; then
+            if [[ $words[3] = "signer" ]]; then
+                argumentOptions=(
+                    "add:Add a signer"
+                    "remove:Remove a signer"
+                )
+                _describe 'Commands' argumentOptions
+                _message -r '
+Usage:  docker trust signer COMMAND
+
+Manage entities who can sign Docker images
+                '
+
+            elif [[ $words[3] = "key" ]]; then
+                argumentOptions=(
+                    "generate:Generate and load a signing key-pair"
+                    "load:Load a private key file for signing"
+                )
+                _describe 'Commands' argumentOptions
+                _message -r '
+Usage:  docker trust key COMMAND
+
+Manage keys for signing Docker images
+                '
+
+            elif [[ $words[3] = "inspect" ]]; then
+                _message -r '
+Usage:  docker trust inspect IMAGE[:TAG] [IMAGE[:TAG]...]
+
+Return low-level information about keys and signatures
+
+Options:
+      --pretty   Print the information in a human friendly format
+                '
+
+            elif [[ $words[3] = "revoke" ]]; then
+                argumentOptions=(
+                    "-y:Do not prompt for confirmation"
+                    "--yes:Do not prompt for confirmation"
+                )
+                _describe 'Commands' argumentOptions
+                _message -r '
+Usage:  docker trust revoke [OPTIONS] IMAGE[:TAG]
+
+Remove trust for an image
+                '
+
+            elif [[ $words[3] = "sign" ]]; then
+                _message -r '
+Usage:  docker trust sign IMAGE:TAG
+
+Sign an image
+
+Options:
+      --local   Sign a locally tagged image
+                '
+            fi
+
+        elif [[ $words[2] = "system" ]]; then
+            if [[ $words[3] = "df" ]]; then
+                argumentOptions=(
+                    "--format:<string>  Format output using a custom template."
+                    "-v:Show detailed information on space usage"
+                    "--verbose:Show detailed information on space usage"
+                )
+                _describe 'Commands' argumentOptions
+                _message -r '
+Usage:  docker system df [OPTIONS]
+
+Show docker disk usage
+                '
+
+            elif [[ $words[3] = "events" ]]; then
+                _describe 'Commands' eventsCommandHelpOutput
+                _message -r '
+Usage:  docker events [OPTIONS]
+
+Get real time events from the server
+
+Aliases:
+  docker system events, docker events
+                '
+
+            elif [[ $words[3] = "info" ]]; then
+                argumentOptions=(
+                    "-f:<string>  Format output using a custom template."
+                    "--format:<string>  Format output using a custom template."
+                )
+                _describe 'Commands' argumentOptions
+                _message -r '
+Usage:  docker system info [OPTIONS]
+
+Display system-wide information
+
+Aliases:
+  docker system info, docker info
+                '
+
+            elif [[ $words[3] = "prune" ]]; then
+                argumentOptions=(
+                    "-a:Remove all unused images not just dangling ones"
+                    "--all:Remove all unused images not just dangling ones"
+                    "--filter:<filter>  Provide filter values (e.g. 'label=<key>=<value>')"
+                    "-f:Do not prompt for confirmation"
+                    "--force:Do not prompt for confirmation"
+                    "--volumes:Prune anonymous volumes"
+                )
+                _describe 'Commands' argumentOptions
+                _message -r '
+Usage:  docker system prune [OPTIONS]
+
+Remove unused data
+                '
+            fi
+
+        fi
+
+    fi
+
+
+    ####### 5th argument######
+    if [[ $CURRENT -eq 5 ]]; then
+        if [[ $words[2] = "buildx" || $words[2] = "builder" ]]; then
+            if [[ $words[3] = "stop" ]]; then
+                if [[ $words[4] = "--builder" ]]; then
+                     _message -r "
+Usage: docker buildx stop --builder <string>
+
+-- builder <string>  Override the configured builder instance"
+                fi
+            elif [[ $words[3] = "imagetools" ]]; then
+                if [[ $words[4] = "create" ]]; then
+                    argumentOptions=(
+                        "--annotation:<stringArray>  Add annotation to the image"
+                        "--append:Append to existing manifest"
+                        "--builder:<string>  Override the configured builder instance"
+                        "--dry-run:Show final image instead of pushing"
+                        "-f:<stringArray>  Read source descriptor from file"
+                        "--file:<stringArray>  Read source descriptor from file"
+                        "--progress:<string>  Set type of progress output ("auto", "plain", "tty"). Use plain to show container output (default "auto")"
+                        "-t:<stringArray>  Set reference for new image"
+                        "--tag:<stringArray>  Set reference for new image"
+                    )
+                    _describe 'Options' argumentOptions
+                    _message "
+Usage:  docker buildx imagetools create [OPTIONS] [SOURCE] [SOURCE...]
+
+Create a new image based on source images
+                    "
+
+                elif [[ $words[4] = "inspect" ]]; then
+                    argumentOptions=(
+                        "--builder:<string>  Override the configured builder instance (default "desktop-linux")"
+                        "--format:<string>  Format the output using the given Go template"
+                        "--raw:Show original, unformatted JSON manifest"
+                    )
+                    _describe 'Options' argumentOptions
+                    _message "
+Usage:  docker buildx imagetools inspect [OPTIONS] NAME
+
+Show details of an image in the registry
+                    "
+                fi
+
+            fi
+        elif [[ $words[2] = "checkpoint" ]]; then
+            if [[ $words[3] = "ls" ]]; then
+                _message -r "
+Usage: docker checkpoint ls --checkpoint-dir <string>
+
+--checkpoint-dir string   Use a custom checkpoint storage directory"
+
+            elif [[ $words[3] = "rm" ]]; then
+                _message -r "
+Usage: docker checkpoint rm --checkpoint-dir <string>
+
+--checkpoint-dir string   Use a custom checkpoint storage directory"
+
+            fi
+        elif [[ $words[2] = "compose" ]]; then
+            if [[ $words[3] = "pause" ]]; then
+                _message -r "
+Usage:  docker compose pause [SERVICE...]
+
+Pause services
+
+--dry-run   Execute command in dry run mode
+                "
+
+            elif [[ $words[3] = "ps" ]]; then
+                if [[ $words[4] = "--format" ]]; then
+                    _message -r "
+Usage: docker compose ps --format <string>
+
+Format output using a custom template:
+  'table':            Print output in table format with
+  column headers (default)
+  'table TEMPLATE':   Print output in table format using the
+  given Go template
+  'json':             Print in JSON format
+  'TEMPLATE':         Print output using the given Go
+  template.
+
+  Refer to https://docs.docker.com/go/formatting/ for more
+  information about formatting output with templates
+  (default 'table')
+                    "
+                fi
+
+            elif [[ $words[3] = "start" ]]; then
+                _message -r "
+Usage: docker compose start --dry-run
+
+--dry-run   Execute command in dry run mode
+
+                "
+            elif [[ $words[3] = "stats" && $words[4] == "--format" ]]; then
+                _message -r "
+Usage: docker compose stats --format <string>
+
+Format output using a custom template:
+   'table':            Print output in table format with column
+   headers (default)
+   'table TEMPLATE':   Print output in table format using the
+   given Go template
+   'json':             Print in JSON format
+   'TEMPLATE':         Print output using the given Go template.
+
+  Refer to https://docs.docker.com/go/formatting/ for more
+  information about formatting output with templates
+                "
+            elif [[ $words[3] = "top" ]]; then
+                _message -r "
+Usage: docker compose top --dry-run
+
+--dry-run   Execute command in dry run mode
+                "
+
+            elif [[ $words[3] = "unpause" ]]; then
+                _message -r "
+Usage: docker compose unpause --dry-run
+
+--dry-run   Execute command in dry run mode
+                "
+
+            fi
+
+        elif [[ $words[2] = "container" ]]; then
+            if [[ $words[3] = "create" && $words[4] = "--cgroupns" ]]; then
+                _message -r "
+Usage: docker container create --cgroupns <string>
+
+Cgroup namespace to use (host|private)
+  'host':    Run the container in the Docker
+  host's cgroup namespace
+  'private': Run the container in its own
+  private cgroup namespace
+  '':        Use the cgroup namespace as
+  configured by the
+             default-cgroupns-mode option on the
+  daemon (default)                   
+              "
+          elif [[ $words[3] = "inspect" && $words[4] = "--format" ]]; then
+                _message -r "
+Format output using a custom template:
+  'json':             Print in JSON format
+  'TEMPLATE':         Print output using the given Go template.
+  Refer to https://docs.docker.com/go/formatting/ for more
+  information about formatting output with templates
+                "
+
+          elif [[ $words[3] = "ls" && $words[4] = "--format" ]]; then
+                _message -r "
+Format output using a custom template:
+  'table':            Print output in table format with column
+  headers (default)
+  'table TEMPLATE':   Print output in table format using the
+  given Go template
+  'json':             Print in JSON format
+  'TEMPLATE':         Print output using the given Go template.
+  Refer to https://docs.docker.com/go/formatting/ for more
+  information about formatting output with templates
+                "
+
+            fi
+       
+        elif [[ $words[2] = "context" && $words[3] = "create" ]]; then
+            if [[ $words[4] = "aci" ]]; then
+                argumentOptions=(
+                    "--description:<string>  Description of the context"
+                    "-h:Help for aci"
+                    "--help:Help for aci"
+                    "--location:<string>  Location"
+                    "--resource-group:<string>  Resource group"
+                    "--subscription-id:<string>  Subscription id"
+                )
+
+                _describe 'Flags' argumentOptions
+                _message -r "
+Create a context for Azure Container Instances
+
+Usage:
+  docker context create aci CONTEXT [flags]
+                " 
+
+            elif [[ $words[4] = "ecs" ]]; then
+                argumentOptions=(
+                    "--access-keys:<string>  Use AWS access keys from file"
+                    "--description:<string>  Description of the context"
+                    "--from-env:Use AWS environment variables for profile, or credentials and region"
+                    "-h:Help for ecs"
+                    "--help:Help for ecs"
+                    "--local-simulation:Create context for ECS local simulation endpoints"
+                    "--profile:<string>  Use an existing AWS profile"
+                )
+
+                _describe 'Flags' argumentOptions
+                _message -r "
+Create a context for Amazon ECS
+
+Usage:
+  docker context create ecs CONTEXT [flags]
+                " 
+
+            fi
+        elif [[ $words[2] = "extension" && $words[3] = "dev" ]]; then 
+            if [[ $words[4] = "debug" ]]; then
+                _message -r "
+Usage:  docker extension dev debug
+
+Set the debug mode for an extension
+
+Examples:
+docker extension dev debug my-extension
+                " 
+
+            elif [[ $words[4] = "reset" ]]; then
+                _message -r "
+Usage:  docker extension dev reset
+
+Reset the source and disables the debug mode for the extension UI
+
+Aliases:
+  reset, remove
+
+Examples:
+docker extension dev reset my-extension
+                " 
+
+            elif [[ $words[4] = "ui-source" ]]; then
+                _message -r "
+Usage:  docker extension dev ui-source
+
+Set a new source for the extension UI
+                " 
+
+            fi
+
+        elif [[ $words[2] = "image" ]]; then
+            if [[ $words[3] = "history" && $words[4] = "--format" ]]; then
+                _message -r "
+Format output using a custom template:
+  'table':            Print output in table format with column
+  headers (default)
+  'table TEMPLATE':   Print output in table format using the
+  given Go template
+  'json':             Print in JSON format
+  'TEMPLATE':         Print output using the given Go template.
+
+  Refer to https://docs.docker.com/go/formatting/ for more
+  information about formatting output with templates
+                "
+            elif [[ $words[3] = "ls" && $words[4] = "--format" || $words[3] = "inspect" && $words[4] = "--format" ]]; then
+                _message -r "
+Format output using a custom template:
+  'table':            Print output in table format with column
+  headers (default)
+  'table TEMPLATE':   Print output in table format using the
+  given Go template
+  'json':             Print in JSON format
+  'TEMPLATE':         Print output using the given Go template.
+
+  Refer to https://docs.docker.com/go/formatting/ for more
+  information about formatting output with templates                  
+                "
+            fi
+
+
+
+        elif [[ $words[2] = "network" && $words[3] = "inspect" && $words[4] = "--format" || $words[2] = "network" && $words[3] = "inspect" && $words[4] = "-f" ]]; then
+            _message -r "
+Format output using a custom template:
+  'json':             Print in JSON format
+  'TEMPLATE':         Print output using the given Go template.
+
+  Refer to https://docs.docker.com/go/formatting/ for more
+  information about formatting output with templates
+            "
+
+        elif [[ $words[2] = "network" && $words[3] = "ls" && $words[4] = "--format" || $words[2] = "network" && $words[3] = "ls" && $words[4] = "-f" ]]; then
+
+            _message -r "
+Format output using a custom template:
+'table':            Print output in table format with column
+headers (default)
+'table TEMPLATE':   Print output in table format using the
+given Go template
+'json':             Print in JSON format
+'TEMPLATE':         Print output using the given Go template.
+
+Refer to https://docs.docker.com/go/formatting/ for more
+information about formatting output with templates
+            "
+
+        elif [[ $words[2] = "plugin" && $words[3] = "ls" && $words[4] = "--format" ]]; then
+            _message -r "
+Format output using a custom template:
+  'table':            Print output in table format with column
+  headers (default)
+  'table TEMPLATE':   Print output in table format using the
+  given Go template
+  'json':             Print in JSON format
+  'TEMPLATE':         Print output using the given Go template.
+
+  Refer to https://docs.docker.com/go/formatting/ for more
+  information about formatting output with templates
+        "
+
+        elif [[ $words[2] = "scout" ]]; then
+            if [[ $words[3] = "integration" ]]; then
+                if [[ $words[4] = "configure" ]]; then
+                argumentOptions=(
+                    "--name:<string>  Name of integration configuration to create"
+                    "--org:<string>  Namespace of the Docker organization"
+                    "--parameter:<strings>  Integration parameters in the form of --parameter NAME=VALUE"
+                )
+                _describe 'Commands' argumentOptions
+                _message -r '
+Configure or update a new integration configuration
+
+Usage
+  docker scout integration configure INTEGRATION
+
+Description
+The docker scout integration configure command creates or updates a new integration configuration for an organization.
+
+Learn More
+  Read docker scout cli reference at https://docs.docker.com/engine/reference/commandline/scout/
+                '
+
+                elif [[ $words[4] = "delete" ]]; then
+                argumentOptions=(
+                    "--name:<string>  Name of integration configuration to delete"
+                    "--org:<string>  Namespace of the Docker organization"
+                )
+                _describe 'Commands' argumentOptions
+                _message -r '
+ Delete a new integration configuration
+
+Usage
+  docker scout integration delete INTEGRATION
+
+Description
+The docker scout integration delete command deletes a new integration configuration for an organization.
+
+Learn More
+  Read docker scout cli reference at https://docs.docker.com/engine/reference/commandline/scout/
+                '
+
+                elif [[ $words[4] = "list" ]]; then
+                argumentOptions=(
+                    "--name:<string>  Name of integration configuration to list"
+                    "--org:<string>  Namespace of the Docker organization"
+                )
+                _describe 'Commands' argumentOptions
+                _message -r '
+Integration Docker Scout
+
+Usage
+  docker scout integration list [INTEGRATION]
+
+Description
+The docker scout integration list configured integrations for an organization.
+
+Learn More
+  Read docker scout cli reference at https://docs.docker.com/engine/reference/commandline/scout/
+                '
+               fi
+
+            elif [[ $words[3] = "repo" ]]; then
+                if [[ $words[3] = "disable" ]]; then
+                    argumentOptions=(
+                        "--all:Disable all repositories of the organization. Can not be used with --filter."
+                        "--filter:<string>  Regular expression to filter repositories by name"
+                        "--integration:<string>  Name of the integration to use for enabling an image"
+                        "--org:<string>  Namespace of the Docker organization"
+                        "--registry:<string>  Container Registry"
+                    )
+                    _describe 'Commands' argumentOptions
+                    _message -r '
+Disable Docker Scout
+
+Usage
+  docker scout repo disable [REPOSITORY]
+
+Description
+The docker scout repo disable command disables Docker Scout on repositories.
+
+Examples
+  Disable a specific repository
+$ docker scout repo disable my/repository
+
+  Disable all repositories of the organization
+$ docker scout repo disable --all
+
+  Disable some repositories based on a filter
+$ docker scout repo disable --filter namespace/backend
+
+  Disable a repository from a specific registry
+$ docker scout repo disable my/repository --registry 123456.dkr.ecr.us-east-1.amazonaws.com
+
+Learn More
+  Read docker scout cli reference at https://docs.docker.com/engine/reference/commandline/scout/
+
+                    '
+                elif [[ $words[3] = "enable" ]]; then
+                    argumentOptions=(
+                        "--all:Enable all repositories of the organization. Can not be used with --filter."
+                        "--filter:<string>  Regular expression to filter repositories by name"
+                        "--integration:<string>  Name of the integration to use for enabling an image"
+                        "--org:<string>  Namespace of the Docker organization"
+                        "--registry:<string>  Container Registry"
+                    )
+                    _describe 'Commands' argumentOptions
+                    _message -r '
+Enable Docker Scout
+
+Usage
+  docker scout repo enable [REPOSITORY]
+
+Description
+The docker scout repo enable command enables Docker Scout on repositories.
+
+Examples
+  Enable a specific repository
+$ docker scout repo enable my/repository
+
+  Enable all repositories of the organization
+$ docker scout repo enable --all
+
+  Enable some repositories based on a filter
+$ docker scout repo enable --filter namespace/backend
+
+  Enable a repository from a specific registry
+$ docker scout repo enable my/repository --registry 123456.dkr.ecr.us-east-1.amazonaws.com
+
+Learn More
+  Read docker scout cli reference at https://docs.docker.com/engine/reference/commandline/scout/
+                    '
+
+                elif [[ $words[3] = "list" ]]; then
+                    argumentOptions=(
+                         "--filter:<string>  Regular expression to filter repositories by name"
+                         "--only-disabled:Filter to disabled repositories only"
+                         "--only-enabled:Filter to enabled repositories only"
+                         "--only-registry:<string>  Filter to a specific registry only: - hub.docker.com - ecr (AWS ECR)"
+                         "--org:<string>  Namespace of the Docker organization"
+                    )
+                    _describe 'Commands' argumentOptions
+                    _message -r '
+ List Docker Scout repositories
+
+Usage
+  docker scout repo list
+
+Description
+The docker scout repo list command shows all repositories in an organization.
+
+If ORG is not provided the default configured organization will be used.
+                    '
+                fi
+
+            fi
+        elif [[ $words[2] = "trust" ]]; then
+            if [[ $words[3] = "key" ]]; then
+                if [[ $words[4] = "generate" ]]; then
+                    _message -r '
+Usage:  docker trust key generate NAME
+
+Generate and load a signing key-pair
+
+Options:
+      --dir string   Directory to generate key in, defaults to current directory
+                    '
+
+                if [[ $words[4] = "load" ]]; then
+                    _message -r '
+Usage:  docker trust key load [OPTIONS] KEYFILE
+
+Load a private key file for signing
+
+Options:
+      --name string   Name for the loaded key (default "signer")
+                    '
+                fi
+
+            elif [[ $words[3] = "signer" ]]; then
+                elif [[ $words[3] = "add" ]]; then
+                    _message -r "
+Usage:  docker trust signer add OPTIONS NAME REPOSITORY [REPOSITORY...]
+
+Add a signer
+
+Options:
+      --key list   Path to the signer's public key file
+                    "
+
+                elif [[ $words[3] = "remove" ]]; then
+                    argumentOptions=(
+                        "-f:Do not prompt for confirmation before removing the most recent signer"
+                        "--force:Do not prompt for confirmation before removing the most recent signer"
+                    )
+                    _describe 'Commands' argumentOptions
+                    _message -r '
+Usage:  docker trust signer remove [OPTIONS] NAME REPOSITORY [REPOSITORY...]
+
+Remove a signer
+                    '
+                fi
+            fi
+
+        #### Next one goes here.
+
+        elif [[ $words[2] = "system" ]]; then
+            if [[ $words[3] = "df" && $words[4] = "--format" ]]; then
+                _message -r '
+Format output using a custom template:
+  "table":            Print output in table format with column
+  headers (default)
+  "table TEMPLATE":   Print output in table format using the
+  given Go template
+  "json":             Print in JSON format
+  "TEMPLATE":         Print output using the given Go template.
+  Refer to https://docs.docker.com/go/formatting/ for more
+  information about formatting output with templates
+                '
+
+            elif [[ $words[3] = "events" && $words[4] = "--format" || $words[3] = "info" && $words[4] = "--format" || $words[3] = "info" && $words[4] = "-f" ]]; then
+                _message -r '
+Format output using a custom template:
+  "json":             Print in JSON format
+  "TEMPLATE":         Print output using the given Go template.
+  Refer to https://docs.docker.com/go/formatting/ for more
+  information about formatting output with templates
+                '
+            fi
+
+        fi
+
+    fi
+	
+}
+
+_generateCache() {
+	echo "\nBuilding Cache... \n"
+
+	local currentLine
+	
+	local allCommands
+
+	local commonCommands
+	local managementCommands
+	local swarmCommands
+	local cmds
+
+	local index
+
+	local bool=0
+
+	docker --help | docker --help | awk -v RS="\n\n" 'NR == 3 || NR == 4 || NR == 5 || NR == 6 {print; print ""}' | sed 's/[^:]*://g' | while read -A currentLine; do
+
+		local param=$(echo $currentLine | awk '{print $1}' | sed 's/\*//g')
+		local description=$(echo $currentLine | awk '{ for (i = 2; i <= NF; i++) printf "%s%s", $i, (i == NF ? "\n" : " ") }' )
+
+		
+		if [[ -n $currentLine ]];then
+			if [[ index -eq 1 ]];then
+				commonCommands=($commonCommands "$param:$description")
+
+			elif [[ index -eq 2 ]]; then
+				managementCommands=($managementCommands "$param:$description")
+			elif [[ index -eq 3 ]]; then
+				swarmCommands=($swarmCommands "$param:$description")
+
+			else
+				cmds=($cmds "$param:$description")
+			fi
+
+			allCommands=($allCommands "$param")
+
+			bool=0
+		else
+
+			if [[ bool -eq 0 ]]; then
+				((index++))
+			fi
+
+			bool=1
+		fi
+
+
+
+	done
+
+	#******* Generating 'Global Options' completions"
+	local globalOptions
+
+
+	declare argumentDescription
+	declare argumentParams
+	bool=0
+	index=1
+
+	docker --help | awk -v RS="\n\n" 'NR == 7 {print; print ""}' | while read -A currentLine; do
+
+		
+		description=$(echo $currentLine | gsed 's/\(-\|--\)[^[:space:]]*//g' | gsed 's/^[[:space:]]*//' | gsed 's/\bstring\b/<&>/' | gsed 's/\blist\b/<&>/')
+
+
+		params=$( echo $currentLine | grep -oE '(?:--|-)\S+' | gsed ':a;N;$!ba;s/\n/ /g' );
+
+		if [[ ${#params} -ne 0 ]]; then
+
+			if [[ index -ne 1 ]]; then
+
+				bool=1
+				
+				pattern='^-[0-9]+'
+
+				if [[ "$argumentParams" =~ $pattern  ]]; then
+					#continue
+				else 
+					argumentParams=$(echo "$argumentParams" | tr -d ',')
+					option_count=$(echo "$argumentParams" | wc -w)
+					#echo "\nParams: $argumentParams  Number of options: $option_count"
+					if [[ $option_count -gt 1 ]]; then
+
+						# Splits the string by whitespace into an array!
+						read -A argumentParams <<< "$argumentParams"
+					
+						for op in "${argumentParams[@]}"; do
+							#echo "Option: $op"
+							
+							#argumentOptions=($argumentOptions "$op:$argumentDescription")
+							globalOptions=($globalOptions "$op:$argumentDescription")
+						done
+
+					else
+						#argumentOptions=($argumentOptions "$argumentParams:$argumentDescription")
+						globalOptions=($globalOptions "$argumentParams:$argumentDescription")
+					fi
+
+				fi
+
+				argumentDescription=""
+				argumentParams=""
+
+				argumentDescription=($argumentDescription $description)
+				argumentParams=($argumentParams $params)
+			else
+				bool=0
+				argumentDescription=($argumentDescription $description)
+				argumentParams=($argumentParams $params)
+			fi
+
+		else
+
+			argumentDescription=($argumentDescription $description)
+			argumentParams=($argumentParams $params)
+
+			bool=0
+			((index++))
+		fi
+
+	done
+
+	argumentParams=$(echo "$argumentParams" | tr -d ',')
+	option_count=$(echo "$argumentParams" | wc -w)
+	#echo "\nParams: $argumentParams  Number of options: $option_count"
+	if [[ $option_count -gt 1 ]]; then
+
+		# Splits the string by whitespace into an array!
+		read -A argumentParams <<< "$argumentParams"
+	
+		for op in "${argumentParams[@]}"; do
+			#echo "Option: $op"
+			
+			#argumentOptions=($argumentOptions "$op:$argumentDescription")
+			globalOptions=($globalOptions "$op:$argumentDescription")
+		done
+
+	else
+		#argumentOptions=($argumentOptions "$argumentParams:$argumentDescription")
+		globalOptions=($globalOptions "$argumentParams:$argumentDescription")
+	fi
+
+	shift globalOptions
+
+
+	_store_cache _docker commonCommands managementCommands swarmCommands cmds globalOptions
+
+}

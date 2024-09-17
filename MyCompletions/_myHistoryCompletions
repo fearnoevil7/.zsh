@@ -1,0 +1,48 @@
+
+_myHistoryCompletions() {
+
+   # Completions with selected word at the beginning
+   local parsedOutput
+   if [[ $SELECTEDWORD ]]; then
+       parsedOutput=$(_call_program commands history | awk '{ for (i = 2; i <= NF; i++) printf "%s ", $i; print "" }' | grep -E "^${SELECTEDWORD}" | tail -20 )
+   else
+       parsedOutput=$(_call_program commands history | awk '{ for (i = 2; i <= NF; i++) printf "%s ", $i; print "" }' | tail -20 )
+   fi
+
+   local currentLine
+
+   typeset -a compiledCompletions
+   typeset -a descriptions
+
+   echo "$parsedOutput" | while read -A currentLine; do
+
+       descriptions=("$currentLine" $descriptions)
+
+       compiledCompletions=("$currentLine" $compiledCompletions)
+       
+   done
+
+   compadd -V "Group A" -x "-- History --" -l -a compiledCompletions
+
+
+   compiledCompletions=()
+   descriptions=()
+    
+   # Adding Completions where the selected word is somewhere in the selected line but not at the beginning.
+   if [[ $SELECTEDWORD ]]; then
+
+       parsedOutput=$(_call_program commands history | awk '{ for (i = 2; i <= NF; i++) printf "%s ", $i; print "" }' | grep -E "$SELECTEDWORD" | grep -vE "^$SELECTEDWORD" | tail -20 )
+
+       echo "$parsedOutput" | while read -A currentLine; do
+            descriptions=($descriptions "$currentLine")
+            compiledCompletions=($compiledCompletions "$currentLine")
+       done
+
+       compadd -V "Group B" -x "-- Search In Line --" -d descriptions -a compiledCompletions
+   fi
+
+
+}
+
+#zle -C completeFromHistoryWidget menu-select _myHistoryCompletions
+#bindkey '^h' completeFromHistoryWidget

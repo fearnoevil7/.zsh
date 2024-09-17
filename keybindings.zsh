@@ -1,0 +1,480 @@
+bindkey -v
+export KEYTIMEOUT=1
+
+# Binds the option + left arrow keys to move back a word
+bindkey "^[[1;3C" vi-backward-word
+# Binds the option + right arrow keys to move forward a word
+bindkey "^[[1;3D" vi-forward-word
+
+
+# Binds the cmd + left arrow keys to move the cursor to the beginning of the line
+bindkey "^[[1;2D" beginning-of-line
+# Binds the cmd + right arrow keys to move the cursor to the end of the line
+bindkey "^[[1;2C" end-of-line
+
+# Only active when in Vim normal mode (due to: -vimcd option)
+# Binds to control-b + f
+bindkey -M vicmd "\C-b" vi-find-prev-char
+
+# Binds shift + option + right arrow to highlight one word to the right
+bindkey "^[[1;10C" select-a-word
+
+# Binds the option + delete key to delete the previous word
+#bindkey "^[[1;2H" backward-kill-word
+bindkey "^[[1;2H" vi-backward-kill-word
+
+# Binds the cmd + delete key to delete the beginning of the line in zsh
+bindkey "^[[1;5D" vi-kill-line
+# Binds the shift + cmd + delete key to delete to the end of the line in zsh
+bindkey "^[[1;6A" vi-kill-eol
+# Binds the fn + delete key to delete the beginning of the line in zsh
+bindkey "\e[3~" vi-kill-line
+# Binds the shift + cmd + delete key to delete to the end of the line in zsh
+bindkey "^[[3;2~" vi-kill-eol
+
+# Binds the keys Shift + Control + C to copy to the end of the line from cursor.
+bindkey "^[[1;15F" vi-yank-eol
+
+zle -N sourceZshFile
+sourceZshFile() {
+    zle -R "Sourcing .zshrc file."
+    zle push-line
+    source /Users/kurama/.config/.zsh/.zshrc
+    zle accept-line
+}
+bindkey "ß" sourceZshFile #Bound to options + s
+
+# delete-char-or-list builtin compeletion widget.
+# Docs: https://discussions.apple.com/thread/412622?answerId=1970792022&sortBy=best#1970792022
+#typeset -g toggleMenuCompleteWhileDeleting=1 # Set a variable.
+#
+#zle -N toggleMenuCompleteWhileDeletingWidget
+#toggleMenuCompleteWhileDeletingWidget() {
+#   if [[ $toggleMenuCompleteWhileDeleting -eq 1 ]]; then 
+#       toggleMenuCompleteWhileDeleting=0
+#   else
+#        toggleMenuCompleteWhileDeleting=1
+#   fi
+#}
+#bindkey "^x" toggleMenuCompleteWhileDeletingWidget
+#
+#zle -N menuCompleteWhileDeleting
+#menuCompleteWhileDeleting() {
+#    #echo "\nLASTWIDGET: $LASTWIDGET\n"
+#    if [[ $toggleMenuCompleteWhileDeleting -eq 1 && ${#BUFFER} -gt 0 ]]; then
+#        zle delete-char-or-list
+#    fi
+#    zle vi-backward-delete-char
+#}
+## Binds to the delete key on MacOS.
+#bindkey "\x7f" menuCompleteWhileDeleting
+
+
+# A custom widet that combines both commands.
+zle -N select_Previous_Word
+select_Previous_Word() {
+
+	# Using built in variables accessible inside widget functions. For a full list go here and look under the "User-Defined Widgets section: https://zsh.sourceforge.io/Doc/Release/Zsh-Line-Editor.html#Standard-Widgets
+	BUFFERLENGTH=${#BUFFER}
+
+	if [[ $REGION_ACTIVE -eq 0 ]]; then
+		zle visual-mode
+	fi
+
+	MARK=$BUFFERLENGTH
+
+	zle vi-backward-word
+}
+
+# Binds shift + option + right arrow to highlight one word to the right
+bindkey "^[[1;10D" select_Previous_Word
+
+zle -N copyToSystemClipboard
+copyToSystemClipboard() {
+	zle vi-yank
+	#echo "Testing: $registers"	
+	
+	echo "$registers" | pbcopy
+}
+# Binds the keys Option + C to copy to the end of the line from cursor.
+bindkey "ç" copyToSystemClipboard
+
+zle -N pasteFromSystemClipboard
+pasteFromSystemClipboard() {
+    contentsFromClipboard=$(pbpaste | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+    BUFFER+=$contentsFromClipboard
+}
+# Binds the keys Option + V to copy to the end of the line from cursor.
+bindkey "√" pasteFromSystemClipboard
+
+
+# Binds the keys Shift + Tab to undo.
+bindkey "^[[Z" undo
+# Binds the keys Shift + Tab to Redo.
+bindkey "^[[1;16E" redo
+
+# Push Buffer to Buffer Stack.
+bindkey "^p" push-line
+# Pop the Buffer stack and retrieve the top of the stack.
+bindkey "^g" get-line
+
+# edit current command line with vim (vim-mode, then CTRL-v)(**Have to be in normal mode in Vim)
+autoload -Uz edit-command-line
+zle -N edit-command-line
+bindkey -M vicmd '´' edit-command-line
+
+#autoload -U incremental-complete-word
+#zle  -N incremental-complete-word
+#bindkey '^w' incremental-complete-word
+
+# General Completion Widgets
+bindkey "^i" menu-expand-or-complete
+# Binds to down arrow
+bindkey "^[[B" menu-expand-or-complete
+
+zle -C correct-word menu-select _correct_word
+zle -N myLineEditorFunction
+myLineEditorFunction() {
+
+     #Clean BUFFER by removing leading & trailing whitespace
+     BUFFER=$(echo $BUFFER | sed 's/^[[:blank:]]*//;s/[[:blank:]]*$//')
+
+     # Edits line and replaces "rcat" or "cat" with "glow" if the line ends with the ".md" extension.
+     if [[ $BUFFER =~ '.md$' ]]; then
+             BUFFER=$(echo $BUFFER | sed "s/$(echo ${BUFFER} | awk '{print $1}')/glow/g")
+
+     elif [[ $(echo ${BUFFER} | awk '{print $1}') = "rcat" || $(echo ${BUFFER} | awk '{print $1}') = "cat" ]];then
+         if [[ $(echo ${BUFFER} | awk '{print $1}') = "rcat" ]];then
+             BUFFER=$(echo $BUFFER | sed 's/rcat/vim/g')
+         else
+             BUFFER=$(echo $BUFFER | sed 's/cat/vim/g')
+         fi
+    
+     # If none of the above cases hold true then try to correct spelling of word under cursor.
+     elif [[ $(echo ${BUFFER} | awk '{print $1}') = "vim" ]];then
+         BUFFER=$(echo $BUFFER | sed 's/vim/rcat/g')
+
+     #elif [[ ]]; then
+         # zle -R "Type the character you would like removed:"
+         # read -k key
+    
+         #BUFFER=$(echo $BUFFER | tr -d "$key")
+     fi
+
+    zle correct-word
+
+    zle execute-named-cmd backward-delete-char
+
+}
+bindkey "^h" myLineEditorFunction
+
+
+# CDR ZSH User Contrib Function: man zshcontrib 
+autoload -Uz chpwd_recent_dirs cdr add-zsh-hook
+add-zsh-hook chpwd chpwd_recent_dirs
+zstyle ':chpwd:*' recent-dirs-default yes
+zstyle ':completion:*' recent-dirs-insert always
+
+# Zsh offers "hook functions", which can be defined and are executed when certain events happen. One of htese functions, chpwd, will be "executed whenever the current working directory is changed."
+chpwd() {
+    ls
+}
+
+# View Zsh Directory Stack. Documentation: https://zsh.sourceforge.io/Intro/intro_6.html
+zle -N viewDirectoryStack
+viewDirectoryStack() {
+    #selection=$(dirs -lv | fzf)
+    selection=$(cdr -l | fzf)
+    BUFFER=$( echo ${selection} | awk '{print $2}')
+    zle accept-line
+}
+bindkey '^k' viewDirectoryStack
+
+
+zle -C recentlyModifiedFiles menu-select _generic
+_completeRecentlyModifiedFiles() {
+
+
+    # Files modified within the past 12 hours.
+    zle -R "Fetching recently modified files within the past 12 hours."
+    recentlyModifiedFiles=$(find / -type d \( -path /System -o -path /Applications -o -path /cores -o -path /sbin -o -path /usr -o -path /Library -o -path /bin -o -path /dev -o -path /home -o -path /private -o -path /tmp -o -path /var -o -path /Users/kurama/Library -o -path /opt \) -prune -o -type f -newermt "-720 minutes" -print 2>&1 | grep -v 'Operation not permitted' | grep -vE ".zcomp[dc]|.DS_Store" | grep -v "/Users/kurama/.cache" | grep -v "/Users/kurama/.vim/undodir" | grep -v "/Users/kurama/local" | grep -v "/Users/kurama/.local" | grep -v ".lesshst" | grep -v ".zcompdump" | grep -v "/Users/kurama/.config/tmux/plugins" | grep -v "/Users/kurama/Assets/.go/pkg/mod/" | grep -v "/Users/kurama/.npm" | grep -vE '^/Users/kurama/Documents/CodingPractice/Rust/projects/.*/target/debug/deps+.*' | grep -v "/Users/kurama/.cargo/.global-cache" | grep -vE ".*/node_modules/.*" | grep -v "/Users/kurama/.viminfo" | grep -vE ".*/storage/logs/.*" | grep -vE ".*/storage/framework/.*" | tr '\n' ' ')
+
+    # Files modified within the past day.
+    #recentlyModifiedFiles=$(find / -type d \( -path /System -o -path /Applications -o -path /cores -o -path /sbin -o -path /usr -o -path /Library -o -path /bin -o -path /dev -o -path /home -o -path /private -o -path /tmp -o -path /var -o -path /Users/kurama/Library -o -path /opt \) -prune -o -type f -newermt "-120 minutes" -print 2>&1 | grep -v 'Operation not permitted' | grep -vE ".zcomp[dc]|.DS_Store" | grep -v "/Users/kurama/.cache" | grep -v "/Users/kurama/.vim/undodir" | grep -v "/Users/kurama/local" | grep -v "/Users/kurama/.local" | grep -v ".lesshst" | grep -v ".zcompdump" | tr '\n' ' ')
+
+    recentlyModifiedFiles=("${(s/ /)recentlyModifiedFiles}")
+    zle -R "Formatting results."
+
+    local savedListOfRecentlyModifiedFiles=("${(@f)$(< $ZDOTDIR/.zsh-recently-modified-files)}");
+    for filepath in "${(@)recentlyModifiedFiles}"; do
+        checkIfItAlreadyExists="${savedListOfRecentlyModifiedFiles[(r)$filepath]}"
+        if [[ -n $checkIfItAlreadyExists ]]; then
+            savedListOfRecentlyModifiedFiles=("${(@)savedListOfRecentlyModifiedFiles:#$checkIfItAlreadyExists}") 
+        fi
+
+        savedListOfRecentlyModifiedFiles=($filepath $savedListOfRecentlyModifiedFiles)
+        zle -R "Result: $filepath"
+    done
+
+    zle -R "Finishing..."
+
+    echo "${(F)savedListOfRecentlyModifiedFiles}" > $ZDOTDIR/.zsh-recently-modified-files
+
+    _describe 'Recently Modified' savedListOfRecentlyModifiedFiles -o nosort
+}
+zstyle ':completion:recentlyModifiedFiles::::' completer _completeRecentlyModifiedFiles
+# Binds to options + j
+bindkey '^u' recentlyModifiedFiles
+zstyle ':completion:recentlyModifiedFiles::::' sort false
+
+# Prompt showing ZSH keyboard shortcuts.
+zle -N viewZshKeyBindings
+viewZshKeyBindings() {
+    zle push-line
+    glow /Users/kurama/MyTips/ZshKeybindingsHelpPage.md
+    zle accept-line
+}
+bindkey '^b' viewZshKeyBindings
+
+# Prompt showing tmux keybindings.
+zle -N viewTmuxTips
+viewTmuxTips() {
+    zle push-line
+    glow /Users/kurama/MyTips/tmux.tips.md
+    zle accept-line
+}
+bindkey '^v' viewTmuxTips
+
+
+zle -N centerCursor
+centerCursor() {
+    /Users/kurama/Assets/Tools/CenterCursorInApp
+}
+bindkey '^x' centerCursor
+
+zle -N openInFinder
+openInFinder() {
+    osascript /Users/kurama/Documents/MyScripts/AppleScripts/openCurrentPathInFinder.scpt
+}
+bindkey 'ƒ' openInFinder
+
+# +-----+
+# | FZF |
+# +-----+
+# Additional zsh widgets for fzf: https://github.com/amaya382/zsh-fzf-widgets
+# Additional Info: https://thevaluable.dev/fzf-shell-integration/
+# FZF Docs: https://github.com/junegunn/fzf?tab=readme-ov-file
+eval "$(fzf --zsh)"
+
+export FZF_COMPLETION_TRIGGER='**'
+
+# export FZF_COMPLETION_TRIGGER=''
+#
+# Binding zsh default completion menu to tab
+# bindkey '\t' $fzf_default_completion
+
+# Remaps "**" "fzf completion function" to "control j".
+# bindkey '^j' fzf-completion
+
+# Binding FZF Widget to a key
+zle -N fzf-cd-widget
+bindkey '^e' fzf-cd-widget
+
+# Custom fuzzy completion for "doge" command
+#   e.g. doge **<TAB>
+#_fzf_complete_test() {
+#  _fzf_complete --multi --reverse --prompt="doge> " -- "$@" < <(
+#    echo very
+#    echo wow
+#    echo such
+#    echo doge
+#  )
+#}
+
+
+typeset -g currentSuggestion
+typeset -g editedSuggestion
+
+_Auto_Suggestor() {
+    # Reset options to defaults and enable LOCAL_OPTIONS.
+    emulate -L zsh
+
+    # Enable globbing flags so that we can use (#m) and (x~y) glob operator.
+    set opt EXTENDED_GLOB
+
+    #echo "\nTESTING: Auto completing   LAST WIDGET: $LASTWIDGET\n"
+    if [[ $LASTWIDGET == (self-insert|magic-space|backward-delete-char|vi-backward-delete-char|vi-forward-char|vi-backward-char) && ${#BUFFER} -gt 0 ]]; then
+        ESCAPED_BUFFER=$(echo "$BUFFER" | sed 's/[][\.*^$(){}|+?]/\\&/g')
+
+        if [[ ${history[(r)$BUFFER??*]} ]]; then
+            currentSuggestion="${history[(r)$BUFFER??*]}"
+            #currentSuggestion="${history[(r)$BUFFER???????*]}"
+
+            tempvar=$CURSOR
+
+            if [[ $KEYS = "$currentSuggestion[$CURSOR]" ]]; then
+                ((tempvar++))
+                POSTDISPLAY="${currentSuggestion##$BUFFER}"
+
+            else
+                if [[ ${#BUFFER} -gt 1 && $BUFFER != " " ]]; then
+                    currentSuggestion="${history[(r)$BUFFER??*]}"
+                    #currentSuggestion="${history[(r)BUFFER???????*]}"
+                fi
+
+                if [[ -n $BUFFER && $currentSuggestion =~ "${(b)ESCAPED_BUFFER}" ]]; then
+                  POSTDISPLAY="${currentSuggestion##$BUFFER}"
+                fi
+            fi
+        else
+            if [[ -n $currentSuggestion ]]; then
+                if [[ $currentSuggestion =~ "${(b)ESCAPED_BUFFER}" ]]; then # This line throws an error when passing it special characters. (+, /, *, etc).
+                    POSTDISPLAY="${currentSuggestion##$BUFFER}"
+                else
+                    currentSuggestion="${history[(r)$BUFFER??*]}"
+                    POSTDISPLAY="${currentSuggestion##$BUFFER}"
+                fi
+            fi
+        fi
+
+    else
+        POSTDISPLAY=""
+    fi
+
+    if [[ $currentSuggestion == $POSTDISPLAY && -z $editedSuggestion ]]; then
+        POSTDISPLAY=""
+    fi
+
+    #region_highlight=("P$CURSOR $HIGLIGHTLENGTH fg=red,bold")
+    region_highlight=("P${#BUFFER} $((${#BUFFER} + ${#POSTDISPLAY})) fg=244,bold")
+    #zle_highlight=(default:underline region:standout special:standout suffix:bold isearch:underline paste:standout)
+    #zle_highlight=(suffix:fg=154)
+    zle_highlight=(suffix:fg=162)
+}
+
+
+zle -N _partially_complete_auto_suggestion
+_partially_complete_auto_suggestion() {
+    # echo "TESTING: $POSTDISPLAY"
+    # POSTDISPLAY="${$POSTDISPLAY//$BUFFER}"
+   #new_string="${original_string//$word_to_remove/}"
+
+    # Reset options to defaults and enable LOCAL_OPTIONS.
+    emulate -L zsh
+    
+    # Enable globbing flags so that we can use (#m) and (x~y) glob operator.
+    set opt EXTENDED_GLOB
+    
+    INITIALBUFFER="$BUFFER"
+    
+    if [[ -n $editedSuggestion && -z $POSTDISPLAY ]]; then
+        POSTDISPLAY="$editedSuggestion"
+        BUFFER="$INITIALBUFFER"
+    fi
+    
+    BUFFER="${POSTDISPLAY%%[.|/|[:space:]]*}"
+    
+    POSTDISPLAY="${POSTDISPLAY#$BUFFER*}"
+    
+    editedSuggestion="$POSTDISPLAY"
+    BUFFER="$INITIALBUFFER$BUFFER"
+
+    pattern='^[^a-zA-Z0-9]*$'
+    
+    if [[ $POSTDISPLAY[1] =~ $pattern ]]; then
+        SPECIAL_CHARACTER=$POSTDISPLAY[1]
+        BUFFER="$BUFFER$SPECIAL_CHARACTER"
+        editedSuggestion="$editedSuggestion[2,-1]"
+    fi
+    
+    zle end-of-line
+}
+# Mapped to Right Arrow in Insert Mode.
+bindkey '^[[F' _partially_complete_auto_suggestion
+
+zle -N _complete_auto_suggestion
+_complete_auto_suggestion() {
+    if [[ $CURSOR -ge ${#BUFFER} ]]; then
+        BUFFER="$BUFFER$POSTDISPLAY"
+        POSTDISPLAY=""
+        zle end-of-line
+    else
+        zle vi-forward-char
+    fi
+}
+# Mapped to Fn + Right Arrow in Insert Mode.
+bindkey '^[[C' _complete_auto_suggestion
+
+_Xcode_Autocomplete() {
+    local BUFFERLENGTH=${#BUFFER}
+    local COUNT=0
+
+    # POSTDISPLAY="Line: ${#BUFFER}, Cursor: $CURSOR"
+
+    if [[ $LASTWIDGET != vi-backward-delete-char && $CURSOR -eq $BUFFERLENGTH ]]; then
+        local PREVIOUSCHAR=${BUFFER[$CURSOR - 1]}
+
+        if [[ $PREVIOUSCHAR = '"' ]]; then
+            for INDEX in {1..${#BUFFER}}; do
+                if [[ ${BUFFER[$INDEX]} = '"' ]]; then
+                    ((COUNT++))
+                fi
+            done
+
+            if [[ $((COUNT % 2)) -eq 1 ]]; then
+                # BUFFER+='"'
+                BUFFER="$LBUFFER\"$RBUFFER"
+            fi
+        elif [[ $PREVIOUSCHAR = "'" ]]; then
+            for INDEX in {1..${#BUFFER}}; do
+                if [[ $BUFFER[$INDEX] = "'" ]]; then
+                    ((COUNT++))
+                fi
+            done
+
+            if [[ $((COUNT % 2)) -eq 1 ]]; then
+                BUFFER="$LBUFFER\'$RBUFFER"
+            fi
+        elif [[ $PREVIOUSCHAR = "[" ]]; then
+            if [[ $BUFFER[$CURSOR] != "]" ]]; then
+                BUFFER="$LBUFFER]$RBUFFER"
+            fi
+        elif [[ $PREVIOUSCHAR = '{' ]]; then
+            if [[ $BUFFER[$CURSOR] != '}' ]]; then
+                BUFFER="$LBUFFER}$RBUFFER"
+            fi
+        elif [[ $PREVIOUSCHAR = "(" ]]; then
+            if [[ $BUFFER[$CURSOR] != ")" ]]; then
+                BUFFER="$LBUFFER)$RBUFFER"
+            fi
+        fi
+    fi
+}
+
+zle -N zle-line-pre-redraw
+zle-line-pre-redraw() {
+    _Auto_Suggestor
+    _Xcode_Autocomplete
+}
+
+
+# Runs code when line starts.
+zle-line-init() {
+
+    if [[ $SELECTEDWORD ]]; then
+        unset SELECTEDWORD
+    fi
+
+    local jobsInBg=$(jobs);
+    if [[ -n $jobsInBg ]]; then
+        #echo "Testing!!"
+        jobsInBg=$(echo $jobsInBg | awk '{print $3, " ", $4}' | sed 's/suspended//g' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+        # Use Z expansion flag to split a string into words.
+        jobsInBg=(${(z)${jobsInBg//$'\n'/ }})
+        zle -M "
+Current # of jobs in bg: ${#jobsInBg[@]}
+${(F)jobsInBg}"
+    fi
+
+}
+zle -N zle-line-init

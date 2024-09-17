@@ -1,0 +1,71 @@
+# Set personal aliases, overriding those provided by oh-my-zsh libs,
+# plugins, and themes. Aliases can be placed here, though oh-my-zsh
+# users are encouraged to define aliases within the ZSH_CUSTOM folder.
+# For a full list of active aliases, run `alias`.
+#
+# Example aliases
+alias zshconfig="mate ~/.zshrc"
+# alias ohmyzsh="mate ~/.oh-my-zsh"
+
+# +-----+
+# | Vim |
+# +-----+
+alias vim="nvim"
+alias rvim="/usr/bin/vim"
+
+
+# +-----+
+# | Cat |
+# +-----+
+alias cat="/opt/homebrew/bin/bat"
+alias rcat="/bin/cat"
+
+# +----+
+# | ls |
+# +----+
+#alias ls="ls -a --color=always"
+# lsd Docs: https://github.com/lsd-rs/lsd
+alias ls="lsd --color=always --icon=always"
+alias .ls="/bin/ls"
+alias lls="ls -la"
+
+# Using "bat" to colorize help text. Let's you use "help cp" to colorize "--help" option for the "cp" command
+alias bathelp='bat --plain --language=help'
+help() {
+    "$@" --help 2>&1 | bathelp
+}
+
+#When you are using zsh, you can also use global aliases to override -h and --help entirely:
+alias -g -- -h='-h 2>&1 | bat --language=help --style=plain'
+alias -g -- --help='--help 2>&1 | bat --language=help --style=plain'
+
+
+# +--------+
+# | Locate |
+# +--------+
+function locate_with_fzf() {
+    locate "$1" | fzf
+}
+
+alias locate="locate_with_fzf"
+alias rlocate="/usr/bin/locate"
+
+# +-----------+
+# | Alacritty |
+# +-----------+
+alias alacritty="/Applications/Alacritty.app/Contents/MacOS/alacritty"
+alias toggleAlacrittyOpacity="~/.config/alacritty/toggle_alacritty_opacity.sh"
+
+
+alias myFZFexplorer="~/Documents/MyScripts/ZshScripts/fzf_explorer.zsh"
+
+# +------+
+# | tldr |
+# +------+
+alias tldr="/opt/homebrew/bin/tldr"
+
+
+# +------+
+# | Glow |
+# +------+
+alias glow="/Users/kurama/Assets/Tools/glow/glow"

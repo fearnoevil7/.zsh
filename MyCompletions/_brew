@@ -1,0 +1,273 @@
+#compdef brew
+
+_brew() {
+
+	#_arguments '1:Commands:_shortHelp' '*-:Options:_testFunc'
+	#_arguments '1:Commands:_shortHelp' -a - set1 -c - set2 -d ':arg:(x2 y2)'
+	
+
+	#TestArray=("A:First Option" "B:Second Option")
+	#TestArray=(("A:A Desc" "B:B Desc" "C:C Desc"))
+	#TestArray=("-a:A Desc" "-b:B desc" "-c:C Desc")
+	#TestArray=("a" "b" "c")
+	#_arguments '1:Commands:_shortHelp' -a -c -d
+	#_arguments "-a[First Description]" "-c[Second Description]" "-d[Third Description]"
+	
+	# Complete Options
+	#_arguments '1:Commands:_longHelp' "${(@)TestArray}" 
+	
+	#_arguments '1:Commands:_longHelp' "-f[Test Param]" "-t[test2 param]"
+	
+
+	# Complete 1st paramter
+	#_arguments '1:Commands:_generateCache'
+
+
+	# Retrieve From Cache
+	_retrieve_cache _brew
+	#
+
+	return_code=$?
+
+	#
+	## Retrieve Cache
+	#if [[ $return_code -ne 0 || ${#BuiltInRegularCommands} -eq 0 || ${#BuiltInDeveloperCommands} -eq 0 ]]; then
+	#fi	
+	
+	if [[ $return_code -ne 0 ]]; then
+		_generateCache
+	fi	
+	
+	if [[ $CURRENT -eq 2 ]]; then
+		 _describe 'Commands' ShortHelpCompletions
+        #_alternative 'arguments:==> Built-in commands:(($BuiltInRegularCommands))' ':==> Built-in developer commands:(($BuiltInDeveloperCommands))'
+	fi
+
+
+}
+
+
+
+_generateCache() {
+	#Cache Policy
+	#zstyle -s ":completion${curcontext}" cache-policy always
+
+	typeset -a BuiltInRegularCommands
+	typeset -a BuiltInDeveloperCommands
+
+
+		
+
+
+	echo "\nBuilding Cache...\n"
+
+       local index=1
+       local currentLine
+       declare checkIfItIsARegularCommand
+
+
+       # Generating Cache for longHelp completions
+       _call_program options brew commands | while read -A currentLine; do
+
+
+		completion=$( echo $currentLine | awk '{print}'  )
+
+
+		if [[ -n $completion ]]; then
+
+			argument_help_output=$(_call_program descriptions "$words[$index] help $completion" | awk -v RS="\n\n" 'NR == 1 || NR == 2 {print; print ""}')
+
+			
+			description=$(echo "$argument_help_output" | awk -v RS="\n\n" 'NR == 2 {gsub(/\n/, " "); print}')
+			usage=$(echo "$argument_help_output" | awk -v RS="\n\n" 'NR == 1 {print}')
+
+
+			if [[ $completion = "help" ]]; then
+				description="Show help info."
+			fi
+			
+			#echo "Completion: $completion"
+
+			
+		       
+			if [[ $( echo $currentLine | awk '/==> Built-in developer commands/{found=1} END { if (found) print "true"; else print "false" }' ) = 'true' && $checkIfItIsARegularCommand -ne 1 ]]; then
+				checkIfItIsARegularCommand=1
+			fi
+
+
+			if [[ $(echo $currentLine | awk '/==> Built-in /{found=1} END { if (found) print "true"; else print "false" }' ) = 'true' ]]; then
+				continue
+			fi
+
+			if [[ $checkIfItIsARegularCommand -eq 1 ]]; then
+				BuiltInDeveloperCommands=($BuiltInDeveloperCommands "${completion}:${description}")
+			else
+				BuiltInRegularCommands=($BuiltInRegularCommands "${completion}:${description}")
+			fi
+
+
+
+		fi
+
+       done
+
+	index=1
+	ShortHelpCompletions=($ShortHelpCompletions "${completion}:${description}")
+
+       # Generating Cache for shortHelp completions
+       _call_program options brew help | while read -A currentLine; do
+
+		completion=$( echo $currentLine | awk '!/:/ && $2 != "brew" && !/brew install --verbose --debug/ {print $2}' )
+
+		if [[ -n $completion ]]; then
+
+			argument_help_output=$(_call_program descriptions "$words[$index] $completion -h" | awk -v RS="\n\n" 'NR == 1 || NR == 2 {print; print ""}')
+
+			description=$(echo "$argument_help_output" | awk -v RS="\n\n" 'NR == 2 {gsub(/\n/, " "); print}')
+			usage=$(echo "$argument_help_output" | awk -v RS="\n\n" 'NR == 1 {print}')
+			if [[ $completion = "help" ]]; then
+				description="Show help info."
+			fi
+			ShortHelpCompletions=($ShortHelpCompletions "${completion}:${description}")
+		fi
+
+       done
+
+
+
+       # Store completions in cache.
+       _store_cache _brew BuiltInRegularCommands BuiltInDeveloperCommands ShortHelpCompletions
+
+
+
+	
+	#_alternative 'arguments:Commands:(($ShortHelpCompletions))' 'arguments:==> Built-in commands:(($BuiltInRegularCommands))' ':==> Built-in developer commands:(($BuiltInDeveloperCommands))' 
+	#_alternative 'arguments:==> Built-in commands:(($BuiltInRegularCommands))' ':==> Built-in developer commands:(($BuiltInDeveloperCommands))' 
+
+
+}
+
+
+_shortHelp() {
+
+	typeset -a ShortHelpCompletions
+
+	if [[ $CURRENT -eq 2 ]]; then
+
+		_retrieve_cache _brew
+
+		return_code=$?
+
+		#echo "Retrieved cache: $ShortHelpCompletions"
+		#echo "Array Length: ${#ShortHelpCompletions}"
+
+
+		if [[ $return_code -ne 0 || ${#ShortHelpCompletions} -eq 0 ]]; then
+			echo "\nBuilding Cache...\n"
+
+			local index=1
+			local currentLine
+			ShortHelpCompletions=($ShortHelpCompletions "${completion}:${description}")
+
+		       _call_program options brew help | while read -A currentLine; do
+
+				completion=$( echo $currentLine | awk '!/:/ && $2 != "brew" && !/brew install --verbose --debug/ {print $2}' )
+
+				if [[ -n $completion ]]; then
+
+					argument_help_output=$(_call_program descriptions "$words[$index] $completion -h" | awk -v RS="\n\n" 'NR == 1 || NR == 2 {print; print ""}')
+
+					description=$(echo "$argument_help_output" | awk -v RS="\n\n" 'NR == 2 {gsub(/\n/, " "); print}')
+					usage=$(echo "$argument_help_output" | awk -v RS="\n\n" 'NR == 1 {print}')
+					if [[ $completion = "help" ]]; then
+						description="Show help info."
+					fi
+					ShortHelpCompletions=($ShortHelpCompletions "${completion}:${description}")
+				fi
+
+		       done
+		       # Store completions in cache.
+		       _store_cache _brew ShortHelpCompletions
+		fi
+
+		shift ShortHelpCompletions
+
+		_describe 'Commands' ShortHelpCompletions
+
+	fi
+
+
+}
+
+_longHelp() {
+	_alternative 'arguments:==> Built-in commands:(($BuiltInRegularCommands))' ':==> Built-in developer commands:(($BuiltInDeveloperCommands))' 
+}
+
+
+
+#built in compstate array
+#for key in ${(k)compstate}; do
+#	echo "Index: $key, Value: $compstate[$key]"
+#done
+#
+#echo $compstate
+
+#for param in "${completions[@]}"; do
+#	echo "Completion: $param"
+#done
+
+
+#echo "\nCurrent: $CURRENT\n"
+#echo "\nWords: $words\n"
+#echo "\nWords[1]: $words[1]\n"
+#echo "\nWords[2]: $words[2]\n"
+	#echo "\nWords[3]: $words[3]\n"
+	#echo "\nWords Length: ${#words[@]}\n"
+
+
+
+#return_status_code=$?
+
+#echo "Storing Cache: $return_status"
+
+
+#typeset -a MyArray
+
+#MyArray=("First Param" "Second Param" "Third Param")
+
+#typeset -a TestArray
+
+
+#echo "TESTING: $MyArray"
+
+#TestArray=("Testing123" "Test4567")
+
+#_store_cache _brew MyArray TestArray
+
+
+
+#typeset -A MyArray
+
+#MyArray=(["MyCachedParam"]="MyCachedVal")
+
+
+#compadd -- $completions
+#_describe 'Commands' completions
+#_describe "Commands" TestCompletion TestDescription -- TestCompletion2 TestDescription2
+#_describe "Commands" Test1 -- Parameter "Subcommand" Test2
+
+
+#completions=$(_call_program options $words[$index] -h | awk -v RS="\n\n" 'NR != 4 {print; print ""}' | awk '{print $2}' | awk '!seen[$0]++' | sed '1d; /^$/d' | tr '\n' ' ')
+
+
+#_call_program options $words[$index] -h | awk -v RS="\n\n" 'NR != 4 {print; print ""}' | awk '{print $2}' | sort | uniq
+#
+
+# '!/:/ removes any lines that contain a ":" &&  $2 != brew removes any lines that have "brew" in the second column
+#completion=$( echo $currentLine | awk '!/:/ && $2 != "brew" && !/brew install --verbose --debug/ {print $2}' )
+
+
+#my_string="This is a sample string"
+
+## Use the s flag to split the string into an array
+#my_array=("${(s: :)my_string}")
